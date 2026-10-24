@@ -58,17 +58,18 @@ export function Icon({ name, cls = '', title }) {
   return html`<svg class=${cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden=${title ? 'false' : 'true'} role=${title ? 'img' : undefined} dangerouslySetInnerHTML=${{ __html: inner }}></svg>`;
 }
 
-// סמל המותג: זרע ושורשים מתפצלים
+// סמל המותג (אטלס): טבעת מצפן, קו קרקע, נבט, ושורש שיורד ומתפצל
 export function BrandMark({ cls = 'brand-mark' }) {
-  return html`<svg class=${cls} viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
-    <path d="M4 9.5h24" opacity=".35"/>
-    <circle cx="16" cy="6.5" r="2.4" fill="currentColor" stroke="none"/>
-    <path d="M16 9v19"/>
-    <path d="M16 13c0 4-6 4.5-8.5 9.5"/>
-    <path d="M16 13c0 4 6 4.5 8.5 9.5"/>
-    <path d="M11 17.3c-2.6 0-4.7 1.2-6 3.4" opacity=".7"/>
-    <path d="M21 17.3c2.6 0 4.7 1.2 6 3.4" opacity=".7"/>
-    <path d="M16 21c-1.5 1.5-1.8 3.6-1.2 6" opacity=".7"/>
+  return html`<svg class=${cls} viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+    <circle cx="16" cy="16" r="13.2" opacity=".42"/>
+    <path d="M16 1.4v3.1M16 27.5v3.1M1.4 16h3.1M27.5 16h3.1" opacity=".55"/>
+    <path d="M7.2 12.6h17.6" opacity=".5"/>
+    <path d="M16 12.4c0-2.6-1.9-4.5-4.7-4.7.2 2.8 2.1 4.5 4.7 4.7Z" fill="currentColor" stroke="none"/>
+    <path d="M16 11.5c0-2.7 2-4.6 4.8-4.8-.2 2.9-2.1 4.6-4.8 4.8Z" fill="currentColor" stroke="none"/>
+    <path d="M16 12.6v12.2"/>
+    <path d="M16 16.4c-1 2.3-3.7 3.1-5.8 5.5"/>
+    <path d="M16 16.4c1 2.3 3.7 3.1 5.8 5.5"/>
+    <path d="M16 20.6c-.8 1.5-2.1 2.3-2.7 4.1" opacity=".7"/>
   </svg>`;
 }
 

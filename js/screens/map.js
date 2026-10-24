@@ -6,6 +6,26 @@ import { data, node, field, title, fullOf, cardOf, seeds, nodeState, levelOf, ca
 import { layout, smooth, arc, ORDER } from '../maplayout.js';
 import { Icon, ConnGlyph } from '../icons.js';
 import { Sheet, FieldChip, CType, Ladder } from '../ui.js';
+import { Strata, Sprout, Compass, ScaleBar } from '../atlas.js';
+
+// חותמת ב־SVG: מודדים את הטקסט אחרי הציור (וגם אחרי שהפונטים נטענו) ומתאימים את המלבן
+function fitStamps(root) {
+  if (!root) return;
+  root.querySelectorAll('g[data-stamp]').forEach((g) => {
+    const t = g.querySelector('text'), r = g.querySelector('rect');
+    if (!t || !r) return;
+    let w = 0;
+    try { w = t.getComputedTextLength(); } catch (e) { return; }
+    if (!w) return;
+    const x = parseFloat(t.getAttribute('x')) || 0, y = parseFloat(t.getAttribute('y')) || 0;
+    const fs = parseFloat(g.getAttribute('data-fs')) || 15, px = parseFloat(g.getAttribute('data-px')) || 8;
+    const anchor = t.getAttribute('text-anchor');
+    // בעברית: start = הקצה הימני של הטקסט, end = הקצה השמאלי
+    const x0 = anchor === 'middle' ? x - w / 2 - px : anchor === 'end' ? x - px : x - w - px;
+    r.setAttribute('x', x0.toFixed(1)); r.setAttribute('width', (w + px * 2).toFixed(1));
+    r.setAttribute('y', (y - fs * 0.95).toFixed(1)); r.setAttribute('height', (fs * 1.35).toFixed(1));
+  });
+}
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const GROUP_LABEL = { toolkit: ['ארגז הכלים', 'איך חושבים'], atlas: ['האטלס', 'על מה חושבים'], collections: ['אוספים', 'חוצי עולמות'] };
@@ -61,7 +81,9 @@ function NodeMark({ id, pos, st, lv, caught, selected }) {
     ${st === 'due' && html`<path class="nm-drop" transform=${`translate(${(r + 3).toFixed(1)} ${(-r - 4).toFixed(1)}) scale(.62)`} d="M0 -9 C5 -3 7 0 7 3 a7 7 0 0 1 -14 0 c0 -3 2 -6 7 -12 z" />`}
     ${caught > 0 && html`<circle class="nm-caught" r=${r + 4.5} />`}
     ${selected && html`<circle class="nm-ring" r=${r + 7} />`}
-    <text class="nm-label" x=${-pos.side * 14} y=${r + 17} text-anchor="middle">${n.he}</text>
+    ${isFull(id)
+      ? html`<g class="nm-stamp" data-stamp="" data-fs="16.5" data-px="9"><rect class="nm-stamp-box" rx="2" /><text class="nm-label" x=${-pos.side * 14} y=${r + 21} text-anchor="middle">${n.he}</text></g>`
+      : html`<text class="nm-label" x=${-pos.side * 14} y=${r + 17} text-anchor="middle">${n.he}</text>`}
   </g>`;
 }
 
@@ -161,6 +183,10 @@ export function MapScreen({ ctx, focus }) {
     if (!view.current.init) { view.current.init = true; focusDefault(); } else apply();
   }, [size.w, size.h]);
   useEffect(() => { if (sel === null && focus && L.pos[focus] && view.current.init) focusDefault(); }, [focus]);
+  useEffect(() => {
+    fitStamps(svgRef.current);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitStamps(svgRef.current));
+  });
 
   // הזזה וזום: אצבע אחת מזיזה, שתיים מגדילות, גלגלת מגדילה סביב הסמן
   useEffect(() => {
@@ -236,18 +262,20 @@ export function MapScreen({ ctx, focus }) {
         </defs>
         <g ref=${gRef}>
           <g class="strata">
-            ${L.strata.map((s) => html`<g class=${`stratum st-${s.group}`}>
-              <rect x=${b.x0 - 600} y=${s.y0} width=${W + 1200} height=${s.y1 - s.y0} />
-              <line x1=${b.x0 - 600} x2=${b.x1 + 600} y1=${s.y0} y2=${s.y0} />
-              <text class="stratum-label" x=${b.x1 - 10} y=${s.y0 + 34} text-anchor="start">${GROUP_LABEL[s.group][0]}</text>
-              <text class="stratum-sub" x=${b.x1 - 10} y=${s.y0 + 56} text-anchor="start">${GROUP_LABEL[s.group][1]}</text>
-            </g>`)}
-            <line class="soil" x1=${b.x0 - 600} x2=${b.x1 + 600} y1="18" y2="18" />
+            <${Strata} x0=${b.x0 - 700} x1=${b.x1 + 700} amp=${12} seed=${0.13}
+              layers=${L.strata.map((s, i) => ({ y0: i === 0 ? 18 : s.y0, y1: i === L.strata.length - 1 ? s.y1 + 700 : s.y1, n: i + 1 }))} />
+            ${L.strata.map((s, i) => {
+              const y = (i === 0 ? 18 : s.y0) + 46;
+              return html`<g class=${`stratum-tag st-tag-${i + 1}`}>
+                <g data-stamp="" data-fs="28" data-px="14"><rect class="stratum-box" rx="2" /><text class="stratum-label" x=${b.x1 + 20} y=${y} text-anchor="end">${GROUP_LABEL[s.group][0]}</text></g>
+                <text class="stratum-sub" x=${b.x1 + 20} y=${y + 30} text-anchor="end">${GROUP_LABEL[s.group][1]}</text>
+              </g>`;
+            })}
           </g>
           <${Roots} L=${L} D=${D} p=${p} states=${states} faint=${true} />
           <rect class="mist" x=${b.x0 - 300} y=${b.y0 - 300} width=${W + 600} height=${H + 600} fill="url(#mist)" mask="url(#fogmask)" />
           <g mask="url(#reveal)"><${Roots} L=${L} D=${D} p=${p} states=${states} faint=${false} /></g>
-          <circle class="seed" cx="0" cy="14" r="9" />
+          <${Sprout} x=${0} y=${18} s=${1.4} />
           ${L.laterals.map((l) => html`<text class=${l.empty ? 'field-label field-label-empty' : 'field-label'} data-field=${l.field} x=${l.end[0] + l.side * 14} y=${l.end[1] + 30} text-anchor="middle">${field(l.field).short}${l.empty ? ' · בקרוב' : ''}</text>`)}
           <g class="marks">${Object.entries(L.pos).filter(([id]) => states[id] !== 'fog').map(([id, pos]) => html`<${NodeMark} id=${id} pos=${pos} st=${states[id]} lv=${levelOf(p, id)} caught=${caughtCount(p, id)} selected=${sel === id} />`)}</g>
         </g>
@@ -267,6 +295,7 @@ export function MapScreen({ ctx, focus }) {
         </div>
       </div>
       ${legend && html`<${Legend} onClose=${() => setLegend(false)} />`}
+      <div class="map-deco" aria-hidden="true"><${ScaleBar} /><${Compass} size=${48} /></div>
     </div>
     ${sel && html`<${NodeSheet} id=${sel} p=${p} st=${states[sel]} onClose=${() => setSel(null)} />`}
   </div>`;

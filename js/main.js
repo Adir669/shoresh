@@ -13,21 +13,18 @@ import { PDSim } from './screens/pdsim.js';
 import { BridgeScreen } from './screens/bridge.js';
 import { ProgressScreen } from './screens/progress.js';
 import { Debate, Eli10 } from './screens/labs.js';
+import { AtlasDefs, Compass } from './atlas.js';
 
-export const DIRS = [
-  { id: 'library', he: 'ספרייה', fonts: 'Rubik · Assistant', desc: 'נייר חם, דיו כחול וזהב עמום' },
-  { id: 'night', he: 'לילה', fonts: 'Suez One · Rubik', desc: 'כחול לילה עמוק ואור ענבר' },
-  { id: 'atlas', he: 'אטלס', fonts: 'Secular One · Noto Sans Hebrew', desc: 'גווני אדמה וקווי מפה' },
-];
+// עיצוב אחד: אטלס · סקר גאולוגי (D-19). ספרייה ולילה יצאו מהממשק.
+export const DIR = 'atlas';
 
-// פרמטרים בכתובת, לבדיקות ולצילומי מסך: ?d=night&m=dark&demo=1&reset=1&interests=finance,history
+// פרמטרים בכתובת, לבדיקות ולצילומי מסך: ?m=dark&demo=1&reset=1&interests=finance,history
 (function applyParams() {
   try {
     const q = new URLSearchParams(location.search);
     if (![...q.keys()].length) return;
     if (q.get('reset') === '1') store.reset();
     store.update((d) => {
-      if (q.get('d')) d.dir = q.get('d');
       if (q.get('m')) d.mode = q.get('m');
       if (q.has('demo')) d.demo = q.get('demo') === '1';
       if (q.get('interests')) { d.interests = q.get('interests').split(',').filter(Boolean); d.onboarded = true; }
@@ -41,7 +38,7 @@ function effectiveMode(mode) {
 }
 function applyTheme(s) {
   const root = document.documentElement;
-  root.dataset.dir = s.dir;
+  root.dataset.dir = DIR;
   root.dataset.mode = effectiveMode(s.mode);
   requestAnimationFrame(() => {
     const bg = getComputedStyle(root).getPropertyValue('--bg').trim();
@@ -85,11 +82,10 @@ function Shell({ tab, state, openSheet }) {
       <nav aria-label="ניווט ראשי">
         ${TABS.map((t) => html`<a class="rail-link" href=${t.href} aria-current=${tab === t.id ? 'page' : undefined}><${Icon} name=${t.icon} />${t.he}</a>`)}
       </nav>
-      <button class="btn btn-ghost btn-sm" onClick=${() => openSheet('seen')}><${Icon} name="eye" />ראיתי את זה היום</button>
+      <button class="btn btn-ghost btn-sm rail-seen" onClick=${() => openSheet('seen')}><${Icon} name="eye" />ראיתי את זה היום</button>
       <div class="rail-foot">
         ${demoBadge}
-        <span class="label">כיוון עיצוב</span>
-        <div class="seg seg-col">${DIRS.map((d) => html`<button aria-pressed=${String(state.dir === d.id)} onClick=${() => store.update((s) => { s.dir = d.id; })}>${d.he}</button>`)}</div>
+        <${Compass} size=${44} />
         <button class="btn btn-quiet btn-sm" onClick=${() => openSheet('settings')}><${Icon} name="sliders" />הגדרות</button>
       </div>
     </aside>
@@ -100,15 +96,8 @@ function Shell({ tab, state, openSheet }) {
 
 function SettingsSheet({ state, onClose }) {
   const set = (fn) => store.update(fn);
-  return html`<${Sheet} title="הגדרות ועיצוב" sub="שלושה כיווני עיצוב לבחירה. כל אחד עם זוג פונטים עבריים משלו." onClose=${onClose}>
+  return html`<${Sheet} title="הגדרות" sub="מצב התצוגה, הדגמה ותחומי העניין." onClose=${onClose}>
     <div class="stack">
-      <div class="dir-picker">
-        ${DIRS.map((d) => html`<button class="dir-card" data-preview=${d.id} aria-pressed=${String(state.dir === d.id)} onClick=${() => set((s) => { s.dir = d.id; })}>
-          <img class="dir-mood" src=${`img/mood-${d.id}.webp`} alt="" loading="lazy" width="1200" height="806" />
-          <span class="dir-sample">אבג</span>
-          <span class="dir-meta"><strong>${d.he}</strong><span class="faint">${d.desc}</span><span class="dir-fonts en">${d.fonts}</span></span>
-        </button>`)}
-      </div>
       <div class="row-between"><span class="field-label">מצב תצוגה</span>
         <div class="seg">${[['auto', 'אוטומטי'], ['light', 'בהיר'], ['dark', 'כהה']].map(([k, he]) => html`<button aria-pressed=${String(state.mode === k)} onClick=${() => set((s) => { s.mode = k; })}>${he}</button>`)}</div>
       </div>
@@ -118,7 +107,7 @@ function SettingsSheet({ state, onClose }) {
       </label>
       <div class="row">
         <a class="btn btn-ghost btn-sm" href="#/welcome" onClick=${onClose}><${Icon} name="heart" />לשנות תחומי עניין</a>
-        <button class="btn btn-quiet btn-sm" onClick=${() => { if (confirm('לאפס את כל ההתקדמות? אי אפשר לבטל.')) { store.reset({ dir: state.dir, mode: state.mode, interests: state.interests, onboarded: true }); onClose(); toast('ההתקדמות אופסה'); } }}>איפוס התקדמות</button>
+        <button class="btn btn-quiet btn-sm" onClick=${() => { if (confirm('לאפס את כל ההתקדמות? אי אפשר לבטל.')) { store.reset({ dir: DIR, mode: state.mode, interests: state.interests, onboarded: true }); onClose(); toast('ההתקדמות אופסה'); } }}>איפוס התקדמות</button>
       </div>
       ${!store.storageOk() && html`<${ErrorBanner} text="הדפדפן הזה לא שומר נתונים (אולי מצב פרטי). ההתקדמות תישמר רק עד שתסגור את הלשונית." />`}
     </div>
@@ -172,7 +161,7 @@ function App() {
   const [sheet, setSheet] = useState(() => { try { const q = new URLSearchParams(location.search).get('sheet'); return q === 'settings' || q === 'seen' ? q : null; } catch (e) { return null; } });
   useEffect(() => store.subscribe((s) => setState({ ...s })), []);
   useEffect(() => demoStore.subscribe(() => setTick((x) => x + 1)), []);
-  useEffect(() => applyTheme(state), [state.dir, state.mode]);
+  useEffect(() => applyTheme(state), [state.mode]);
   useEffect(() => {
     try {
       const mq = matchMedia('(prefers-color-scheme: dark)');
@@ -216,6 +205,7 @@ function App() {
   const screen = (screens[route.name] || screens.home)();
   const bare = route.name === 'welcome';
   return html`<div class="app" data-screen=${route.name}>
+    <${AtlasDefs} />
     ${!bare && html`<${Shell} tab=${TAB_OF[route.name] || 'home'} state=${state} openSheet=${setSheet} />`}
     <main class=${bare ? 'main main-bare' : route.name === 'map' ? 'main main-map' : 'main'} id="main">
       <div class=${route.name === 'map' ? 'screen-fade' : 'wrap screen-enter'} key=${hash}>${screen}</div>

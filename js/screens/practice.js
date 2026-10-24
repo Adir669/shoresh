@@ -5,17 +5,19 @@ import { Icon } from '../icons.js';
 import { FieldChip, Back, Empty, Feedback, toast, fmtRel } from '../ui.js';
 import { ExerciseView, FirstFallEx, TYPE_NAME } from '../exercises.js';
 
+// לכל סוג תרגול איור משלו (Higgsfield, בסגנון האטלס): app/img/atlas/ill-<id>.webp
 const KINDS = [
-  { id: 'case', href: '#/practice/case', icon: 'folder', he: 'תיק לפענוח', desc: 'סיפור קצר עם אנשים והחלטה. מה הכשל המרכזי?' },
-  { id: 'duel', href: '#/practice/duel', icon: 'scale', he: 'דו־קרב תאומים', desc: 'שני מקרים דומים, שני מושגים דומים. מי זה מי?' },
-  { id: 'firstfall', href: '#/practice/firstfall', icon: 'pit', he: 'קודם נופלים', desc: 'שאלה שרוב האנשים טועים בה, ורק אחר כך ההסבר.' },
-  { id: 'hunt', href: '#/practice/hunt', icon: 'magnifier', he: 'ציד בשטח', desc: 'כותרת, פרסומת או פוסט. איפה הכשל?' },
-  { id: 'pd', href: '#/practice/pd', icon: 'grid', he: 'דילמת האסיר', desc: 'סימולציה: עשרה סיבובים מול אסטרטגיה נסתרת, ואז טורניר.' },
+  { id: 'case', href: '#/practice/case', he: 'תיק לפענוח', desc: 'סיפור קצר עם אנשים והחלטה. מה הכשל המרכזי?' },
+  { id: 'duel', href: '#/practice/duel', he: 'דו־קרב תאומים', desc: 'שני מקרים דומים, שני מושגים דומים. מי זה מי?' },
+  { id: 'firstfall', href: '#/practice/firstfall', he: 'קודם נופלים', desc: 'שאלה שרוב האנשים טועים בה, ורק אחר כך ההסבר.' },
+  { id: 'hunt', href: '#/practice/hunt', he: 'ציד בשטח', desc: 'כותרת, פרסומת או פוסט. איפה הכשל?' },
+  { id: 'pd', href: '#/practice/pd', he: 'דילמת האסיר', desc: 'סימולציה: עשרה סיבובים מול אסטרטגיה נסתרת, ואז טורניר.' },
 ];
 const LABS = [
-  { href: '#/debate', icon: 'chat', he: 'ויכוח עם סופיסט', desc: 'הוא מתווכח איתך ומשחיל כשלים. תתפוס אותם תוך כדי.' },
-  { href: '#/eli10', icon: 'pencil', he: 'תסביר כאילו אני בן 10', desc: 'אתה מסביר במילים שלך, ומקבל משוב לפי מחוון.' },
+  { id: 'debate', href: '#/debate', he: 'ויכוח עם סופיסט', desc: 'הוא מתווכח איתך ומשחיל כשלים. תתפוס אותם תוך כדי.' },
+  { id: 'eli10', href: '#/eli10', he: 'תסביר כאילו אני בן 10', desc: 'אתה מסביר במילים שלך, ומקבל משוב לפי מחוון.' },
 ];
+const Ill = ({ id }) => html`<span class="kind-ill"><img src=${`img/atlas/ill-${id}.webp`} alt="" width="480" height="480" loading="lazy" decoding="async" /></span>`;
 
 export function Practice({ ctx }) {
   const { p } = ctx;
@@ -26,13 +28,15 @@ export function Practice({ ctx }) {
     ${due.length > 0 && html`<a class="tile water-banner" href="#/water"><${Icon} name="drop" /><div><strong>${due.length} מושגים מחכים להשקיה</strong><p class="muted">${due.slice(0, 4).map(title).join(' · ')}</p></div><${Icon} name="next" /></a>`}
     <div class="kind-grid reveal">
       ${KINDS.map((k, i) => html`<a class=${`tile kind kind-${k.id}`} href=${k.href} style=${`--i:${i}`}>
-        <span class="kind-icon"><${Icon} name=${k.icon} /></span>
-        <strong>${k.he}</strong><span class="muted">${k.desc}</span>
-        ${['case', 'duel', 'hunt'].includes(k.id) && html`<span class="faint num">${count(k.id)} תרגילים</span>`}
+        <span class="kind-text">
+          <strong>${k.he}</strong><span class="muted">${k.desc}</span>
+          ${['case', 'duel', 'hunt'].includes(k.id) && html`<span class="faint num kind-count">${count(k.id)} תרגילים</span>`}
+        </span>
+        <${Ill} id=${k.id} />
       </a>`)}
     </div>
     <div class="section-head labs-head"><h2>מעבדה</h2><span class="badge badge-demo">הדגמה עם תוכן לדוגמה</span></div>
-    <div class="lab-grid">${LABS.map((k) => html`<a class="tile kind" href=${k.href}><span class="kind-icon"><${Icon} name=${k.icon} /></span><strong>${k.he}</strong><span class="muted">${k.desc}</span></a>`)}</div>
+    <div class="lab-grid">${LABS.map((k) => html`<a class=${`tile kind kind-lab kind-${k.id}`} href=${k.href}><span class="kind-text"><strong>${k.he}</strong><span class="muted">${k.desc}</span></span><${Ill} id=${k.id} /></a>`)}</div>
   </div>`;
 }
 

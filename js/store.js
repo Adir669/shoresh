@@ -6,7 +6,7 @@ export const DEFAULTS = () => ({
   v: 1,
   onboarded: false,
   interests: [],          // לפי סדר הבחירה; הראשון קובע את הדוגמה הראשונה
-  dir: 'library',         // library | night | atlas
+  dir: 'atlas',           // עיצוב אחד מאז D-19. השדה נשאר לתאימות עם נתונים שמורים
   mode: 'auto',           // auto | light | dark
   demo: false,            // מצב הדגמה: איך המפה נראית אחרי חודש
   concepts: {},           // id → { level, stage, due, seenAt, learnedAt, checks: {} }

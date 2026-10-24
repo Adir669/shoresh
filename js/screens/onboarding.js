@@ -4,6 +4,7 @@ import { store } from '../store.js';
 import { data, seeds, node, fullOf, cardOf, interestFields } from '../data.js';
 import { Icon, BrandMark } from '../icons.js';
 import { FieldChip } from '../ui.js';
+import { Strata, Sprout, Compass } from '../atlas.js';
 
 // איור השורשים שנכתבים מעצמם
 export function RootsArt() {
@@ -19,12 +20,18 @@ export function RootsArt() {
     { d: 'M200 300 C170 322 150 328 118 326', f: 'models', w: 1.4 },
   ];
   const nodes = [[120, 230, 'biases', 7], [285, 240, 'games', 7], [200, 300, 'fallacies', 8], [60, 200, 'statistics', 5], [345, 185, 'economics', 5], [150, 340, 'decisions', 5], [262, 345, 'philosophy', 5], [280, 330, 'history', 4], [118, 326, 'models', 4], [40, 360, 'biases', 4], [360, 370, 'games', 4], [198, 420, 'fallacies', 5]];
-  return html`<svg class="roots-art" viewBox="0 0 400 440" aria-hidden="true">
-    <line x1="20" y1="40" x2="380" y2="40" class="roots-soil" />
-    <circle cx="200" cy="34" r="9" class="roots-seed" />
-    ${roots.map((r, i) => html`<path d=${r.d} data-field=${r.f} class="roots-path" style=${`--i:${i};stroke-width:${r.w}`} pathLength="1" />`)}
-    ${nodes.map(([x, y, f, r], i) => html`<circle cx=${x} cy=${y} r=${r} data-field=${f} class="roots-node" style=${`--i:${i}`} />`)}
-  </svg>`;
+  return html`<div class="roots-frame corners">
+    <svg class="roots-art" viewBox="0 0 400 440" aria-hidden="true">
+      <defs><clipPath id="ra-clip"><rect x="0" y="0" width="400" height="440" rx="4" /></clipPath></defs>
+      <g clip-path="url(#ra-clip)">
+        <${Strata} x0=${0} x1=${400} amp=${5} seed=${0.55} layers=${[{ y0: 40, y1: 175, n: 1 }, { y0: 175, y1: 305, n: 2 }, { y0: 305, y1: 440, n: 3 }]} />
+        ${roots.map((r, i) => html`<path d=${r.d} data-field=${r.f} class="roots-path" style=${`--i:${i};stroke-width:${r.w + 0.6}`} pathLength="1" />`)}
+        ${nodes.map(([x, y, f, r], i) => html`<circle cx=${x} cy=${y} r=${r} data-field=${f} class="roots-node" style=${`--i:${i}`} />`)}
+        <${Sprout} x=${200} y=${40} s=${1.25} />
+      </g>
+    </svg>
+    <span class="roots-compass"><${Compass} size=${42} /></span>
+  </div>`;
 }
 
 export function Onboarding({ ctx }) {

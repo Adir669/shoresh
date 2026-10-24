@@ -25,17 +25,22 @@ body {
   transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
 
-/* גרעין נייר עדין בכיוון ספרייה — רק על שכבה קבועה שלא נגללת (ביצועים) */
-:root[data-dir="library"] body::before {
+/* קווי גובה טופוגרפיים עדינים, ומעליהם גרעין נייר. שכבה קבועה שלא נגללת (ביצועים) */
+body::before, body::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-:root[data-dir="library"][data-mode="dark"] body::before { opacity: 0.035; }
+body::before { opacity: var(--topo-op); background-size: 900px 900px; background-position: 0 0; }
+:root[data-mode="light"] body::before { background-image: url("../img/atlas/topo-light.svg"); }
+:root[data-mode="dark"] body::before { background-image: url("../img/atlas/topo-dark.svg"); }
+body::after {
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0 0.15 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-mode="dark"] body::after { opacity: 0.04; }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
