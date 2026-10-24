@@ -15,7 +15,7 @@ import { ProgressScreen } from './screens/progress.js';
 import { Debate, Eli10 } from './screens/labs.js';
 
 export const DIRS = [
-  { id: 'library', he: 'ספרייה', fonts: 'Frank Ruhl Libre · Assistant', desc: 'נייר חם, דיו כחול וזהב עמום' },
+  { id: 'library', he: 'ספרייה', fonts: 'Rubik · Assistant', desc: 'נייר חם, דיו כחול וזהב עמום' },
   { id: 'night', he: 'לילה', fonts: 'Suez One · Rubik', desc: 'כחול לילה עמוק ואור ענבר' },
   { id: 'atlas', he: 'אטלס', fonts: 'Secular One · Noto Sans Hebrew', desc: 'גווני אדמה וקווי מפה' },
 ];

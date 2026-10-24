@@ -70,11 +70,11 @@
 
 /* ───────────── כיוון 1: ספרייה — ספר מעוצב: נייר חם, דיו כחול, זהב עמום ───────────── */
 :root[data-dir="library"] {
-  --font-display: "Frank Ruhl Libre", "David Libre", serif;
+  --font-display: "Rubik", system-ui, sans-serif;
   --font-body: "Assistant", system-ui, sans-serif;
   --fw-display: 700; --fw-display-soft: 500; --fw-body: 400; --fw-strong: 600;
   --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 18px; --r-xl: 24px; --r-pill: 999px;
-  --display-size-adjust: 1.06;
+  --display-size-adjust: 1;
 }
 :root[data-dir="library"][data-mode="light"] {
   color-scheme: light;
