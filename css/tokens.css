@@ -1,0 +1,168 @@
+/* מערכת העיצוב של שורש: משתנים בלבד.
+   כיוון: עברית בלבד (RTL), עם תכונות לוגיות בלבד (margin-inline וכו׳).
+   שלושה כיווני עיצוב (data-dir על <html>): library | night | atlas
+   שני מצבים (data-mode על <html>): light | dark — נקבע ב־JS (גם במצב "אוטומטי"). */
+
+:root {
+  /* ריווח, בסיס 4px */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-7: 32px; --s-8: 40px; --s-9: 56px; --s-10: 72px;
+
+  /* טיפוגרפיה: גדלים. עברית נקראת גדולה וצפופה יותר מלטינית, לכן גוף הטקסט 17px */
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: 1.1875rem;
+  --fs-xl: clamp(1.35rem, 1.15rem + 0.9vw, 1.65rem);
+  --fs-2xl: clamp(1.7rem, 1.35rem + 1.5vw, 2.3rem);
+  --fs-3xl: clamp(2rem, 1.5rem + 2.3vw, 3rem);
+  --lh-tight: 1.25;
+  --lh-snug: 1.45;
+  --lh-body: 1.75;
+  --measure: 64ch;
+
+  /* תנועה: רק transform ו־opacity */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 140ms;
+  --dur-2: 260ms;
+  --dur-3: 520ms;
+
+  /* מבנה */
+  --topbar-h: 58px;
+  --tabbar-h: 66px;
+  --rail-w: 232px;
+  --content-w: 1120px;
+
+  /* גוון קבוע לכל תחום (OKLCH). הבהירות והרוויה (--fl, --fc) משתנות לפי הכיוון והמצב,
+     כך שלצבע של תחום יש אותה משמעות בכל כיוון. ארגז הכלים בגוונים קרים, האטלס בגווני אדמה, האוספים בשזיף. */
+  --h-biases: 255; --h-fallacies: 228; --h-statistics: 203; --h-decisions: 182;
+  --h-games: 278; --h-models: 162; --h-rhetoric: 300;
+  --h-philosophy: 78; --h-science: 135; --h-economics: 96; --h-history: 42;
+  --h-politics: 24; --h-psychology: 8; --h-cultures: 115;
+  --h-effects: 338; --h-laws: 322; --h-expressions: 352; --h-paradoxes: 312;
+}
+
+/* צבעי התחומים, מחושבים על <html> אחרי שכל ההצהרות של הכיוון והמצב הוחלו */
+:root {
+  --f-biases: oklch(var(--fl) var(--fc) var(--h-biases));
+  --f-fallacies: oklch(var(--fl) var(--fc) var(--h-fallacies));
+  --f-statistics: oklch(var(--fl) var(--fc) var(--h-statistics));
+  --f-decisions: oklch(var(--fl) var(--fc) var(--h-decisions));
+  --f-games: oklch(var(--fl) var(--fc) var(--h-games));
+  --f-models: oklch(var(--fl) var(--fc) var(--h-models));
+  --f-rhetoric: oklch(var(--fl) var(--fc) var(--h-rhetoric));
+  --f-philosophy: oklch(var(--fl) var(--fc) var(--h-philosophy));
+  --f-science: oklch(var(--fl) var(--fc) var(--h-science));
+  --f-economics: oklch(var(--fl) var(--fc) var(--h-economics));
+  --f-history: oklch(var(--fl) var(--fc) var(--h-history));
+  --f-politics: oklch(var(--fl) var(--fc) var(--h-politics));
+  --f-psychology: oklch(var(--fl) var(--fc) var(--h-psychology));
+  --f-cultures: oklch(var(--fl) var(--fc) var(--h-cultures));
+  --f-effects: oklch(var(--fl) var(--fc) var(--h-effects));
+  --f-laws: oklch(var(--fl) var(--fc) var(--h-laws));
+  --f-expressions: oklch(var(--fl) var(--fc) var(--h-expressions));
+  --f-paradoxes: oklch(var(--fl) var(--fc) var(--h-paradoxes));
+  --g-toolkit: oklch(var(--fl) var(--fc) 232);
+  --g-atlas: oklch(var(--fl) var(--fc) 62);
+  --g-collections: oklch(var(--fl) var(--fc) 332);
+}
+
+/* ───────────── כיוון 1: ספרייה — ספר מעוצב: נייר חם, דיו כחול, זהב עמום ───────────── */
+:root[data-dir="library"] {
+  --font-display: "Frank Ruhl Libre", "David Libre", serif;
+  --font-body: "Assistant", system-ui, sans-serif;
+  --fw-display: 700; --fw-display-soft: 500; --fw-body: 400; --fw-strong: 600;
+  --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 18px; --r-xl: 24px; --r-pill: 999px;
+  --display-size-adjust: 1.06;
+}
+:root[data-dir="library"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #F4EFE5; --bg-deep: #EBE3D3; --surface: #FBF8F1; --surface-2: #F1EADD;
+  --ink: #1D2736; --ink-2: #4E4A42; --ink-3: #857C6E;
+  --line: #E1D8C7; --line-strong: #CBBFA9;
+  --accent: #2B4775; --accent-ink: #FBF8F1; --accent-soft: #E3E7EE;
+  --gold: #9A7128; --gold-soft: #F0E4C8;
+  --ok: #3B7349; --ok-soft: #E3EEDF; --bad: #A33F2E; --bad-soft: #F4E1DA;
+  --shadow-rgb: 52 40 22;
+  --fl: 0.50; --fc: 0.075;
+  --map-bg: #EEE6D6; --map-ink: #1D2736;
+}
+:root[data-dir="library"][data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #13161D; --bg-deep: #0E1016; --surface: #1A1E27; --surface-2: #222733;
+  --ink: #EDE6D7; --ink-2: #BDB4A3; --ink-3: #8D8677;
+  --line: #2A2F3B; --line-strong: #3B4151;
+  --accent: #A3BCE6; --accent-ink: #10141B; --accent-soft: #222B3C;
+  --gold: #D6B36A; --gold-soft: #393022;
+  --ok: #86C495; --ok-soft: #1E2D23; --bad: #E7907F; --bad-soft: #3A2320;
+  --shadow-rgb: 0 0 0;
+  --fl: 0.75; --fc: 0.075;
+  --map-bg: #0F1218; --map-ink: #EDE6D7;
+}
+
+/* ───────────── כיוון 2: לילה — מצפה כוכבים: כחול לילה עמוק, אור ענבר אחד ───────────── */
+:root[data-dir="night"] {
+  --font-display: "Suez One", serif;
+  --font-body: "Rubik", system-ui, sans-serif;
+  --fw-display: 400; --fw-display-soft: 400; --fw-body: 400; --fw-strong: 500;
+  --r-xs: 6px; --r-sm: 12px; --r-md: 16px; --r-lg: 22px; --r-xl: 30px; --r-pill: 999px;
+  --display-size-adjust: 1;
+}
+:root[data-dir="night"][data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #0B1022; --bg-deep: #070B19; --surface: #121933; --surface-2: #19213F;
+  --ink: #E6EAF5; --ink-2: #A9B1CA; --ink-3: #737C99;
+  --line: #222B4C; --line-strong: #323D65;
+  --accent: #E8AE5C; --accent-ink: #1A1205; --accent-soft: #2A2617;
+  --gold: #E8AE5C; --gold-soft: #2E2716;
+  --ok: #7CC7A4; --ok-soft: #14292A; --bad: #F08C7E; --bad-soft: #3A1E26;
+  --shadow-rgb: 0 0 0;
+  --fl: 0.77; --fc: 0.085;
+  --map-bg: #080C1C; --map-ink: #E6EAF5;
+}
+:root[data-dir="night"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #EDF0F6; --bg-deep: #E1E6F0; --surface: #FBFCFE; --surface-2: #F0F3F9;
+  --ink: #121A33; --ink-2: #47506B; --ink-3: #79829B;
+  --line: #D8DEEA; --line-strong: #C2CADC;
+  --accent: #9E5F17; --accent-ink: #FFFFFF; --accent-soft: #F4E8D6;
+  --gold: #9E5F17; --gold-soft: #F4E8D6;
+  --ok: #2F7457; --ok-soft: #DDEEE6; --bad: #AE4333; --bad-soft: #F5E0DC;
+  --shadow-rgb: 18 26 51;
+  --fl: 0.52; --fc: 0.085;
+  --map-bg: #E5E9F2; --map-ink: #121A33;
+}
+
+/* ───────────── כיוון 3: אטלס — מחברת שדה: גווני אדמה, קווי מפה, טרקוטה ───────────── */
+:root[data-dir="atlas"] {
+  --font-display: "Secular One", sans-serif;
+  --font-body: "Noto Sans Hebrew", system-ui, sans-serif;
+  --fw-display: 400; --fw-display-soft: 400; --fw-body: 400; --fw-strong: 500;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 8px; --r-lg: 12px; --r-xl: 16px; --r-pill: 999px;
+  --display-size-adjust: 1;
+}
+:root[data-dir="atlas"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #EEEBE1; --bg-deep: #E3DFD1; --surface: #F8F6EF; --surface-2: #ECE9DE;
+  --ink: #1E2823; --ink-2: #4F5952; --ink-3: #838B83;
+  --line: #D9D4C5; --line-strong: #C1BBA9;
+  --accent: #A94B29; --accent-ink: #FFF8F2; --accent-soft: #F2E0D6;
+  --gold: #957424; --gold-soft: #EEE4C6;
+  --ok: #3B704D; --ok-soft: #DFEADF; --bad: #A33F2E; --bad-soft: #F2DED8;
+  --shadow-rgb: 30 40 35;
+  --fl: 0.50; --fc: 0.08;
+  --map-bg: #E8E4D6; --map-ink: #1E2823;
+}
+:root[data-dir="atlas"][data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #121614; --bg-deep: #0C0F0D; --surface: #191E1B; --surface-2: #212723;
+  --ink: #E8E5D9; --ink-2: #ADB1A5; --ink-3: #7E837A;
+  --line: #29302B; --line-strong: #3A423C;
+  --accent: #E58460; --accent-ink: #1A0E08; --accent-soft: #33231C;
+  --gold: #D2B160; --gold-soft: #302A1A;
+  --ok: #86C29A; --ok-soft: #1B2A20; --bad: #EE8E7E; --bad-soft: #36211D;
+  --shadow-rgb: 0 0 0;
+  --fl: 0.75; --fc: 0.08;
+  --map-bg: #0E1210; --map-ink: #E8E5D9;
+}

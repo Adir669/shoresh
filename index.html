@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- מדיניות כיווניות: עברית בלבד (RTL). כל הפריסה בתכונות לוגיות. -->
+<html dir="rtl" lang="he" data-dir="library" data-mode="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>שורש</title>
+  <meta name="description" content="שורש: ללמוד מושגים לעומק, מושג אחרי מושג, עד שמזהים אותם ביום־יום.">
+  <meta name="theme-color" content="#F4EFE5">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="שורש">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- שלושת זוגות הפונטים. הדפדפן מוריד רק את הקבצים של הכיוון הפעיל. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Assistant:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <script>
+    // מחיל כיוון ומצב לפני הציור הראשון, כדי שלא יהיה הבהוב
+    (function () {
+      try {
+        var s = JSON.parse(localStorage.getItem('shoresh:v1') || '{}');
+        var q = new URLSearchParams(location.search);
+        var d = q.get('d') || s.dir || 'library';
+        var m = q.get('m') || s.mode || 'auto';
+        if (m === 'auto') m = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.dir = d;
+        document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    })();
+  </script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <div id="app">
+    <noscript><p style="padding:24px">שורש צריך JavaScript כדי לעבוד.</p></noscript>
+  </div>
+</body>
+</html>

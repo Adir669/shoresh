@@ -1,0 +1,106 @@
+/* בסיס: איפוס, טיפוגרפיה, פריסה. תכונות לוגיות בלבד. */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; } /* L-073 */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg);
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-weight: var(--fw-body);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  background: var(--bg);
+  text-align: start;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+
+/* גרעין נייר עדין בכיוון ספרייה — רק על שכבה קבועה שלא נגללת (ביצועים) */
+:root[data-dir="library"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-dir="library"][data-mode="dark"] body::before { opacity: 0.035; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-display);
+  line-height: var(--lh-tight);
+  margin: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+h1 { font-size: calc(var(--fs-2xl) * var(--display-size-adjust)); }
+h2 { font-size: calc(var(--fs-xl) * var(--display-size-adjust)); }
+h3 { font-size: calc(var(--fs-lg) * var(--display-size-adjust)); }
+p { margin: 0; text-wrap: pretty; }
+p + p { margin-block-start: var(--s-3); }
+strong, b { font-weight: var(--fw-strong); }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+small { font-size: var(--fs-sm); }
+img, svg { display: block; max-width: 100%; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-xs); }
+::selection { background: var(--accent-soft); color: var(--ink); }
+
+/* טקסט באנגלית בתוך עברית (שמות מקוריים, הפניות) */
+.en { direction: ltr; unicode-bidi: isolate; display: inline-block; font-family: var(--font-body); }
+.ltr { direction: ltr; unicode-bidi: isolate; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* פריסה */
+.app { position: relative; z-index: 1; min-height: 100dvh; }
+.main {
+  padding-block: calc(var(--topbar-h) + var(--s-5)) calc(var(--tabbar-h) + var(--s-8) + env(safe-area-inset-bottom));
+  padding-inline: var(--s-4);
+}
+.wrap { max-width: var(--content-w); margin-inline: auto; }
+.read { max-width: var(--measure); }
+.stack > * + * { margin-block-start: var(--s-4); }
+.stack-lg > * + * { margin-block-start: var(--s-7); }
+.row { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.muted { color: var(--ink-2); }
+.faint { color: var(--ink-3); }
+.label { font-size: var(--fs-xs); font-weight: var(--fw-strong); color: var(--ink-3); }
+.kicker { font-size: var(--fs-sm); font-weight: var(--fw-strong); color: var(--accent); }
+.lead { font-size: var(--fs-lg); line-height: var(--lh-snug); color: var(--ink-2); }
+.screen-title { display: grid; gap: var(--s-2); margin-block-end: var(--s-6); }
+.screen-title p { color: var(--ink-2); max-width: 58ch; }
+
+@media (min-width: 960px) {
+  .main {
+    padding-block: var(--s-8) var(--s-10);
+    padding-inline-start: calc(var(--rail-w) + var(--s-8));
+    padding-inline-end: var(--s-8);
+  }
+}
+
+/* כניסה מדורגת של רשימות */
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.reveal > * { animation: rise var(--dur-3) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 55ms); }
+.screen-enter { animation: rise var(--dur-3) var(--ease-out) both; }
+/* במפה: כניסה בשקיפות בלבד. transform על אב של position:fixed הופך אותו לעוגן, והמפה מתכווצת לגובה 0 */
+.screen-fade { animation: fade-in var(--dur-2) var(--ease-out) both; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}

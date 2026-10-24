@@ -1,0 +1,84 @@
+// אייקונים בקו אחיד (24×24, עובי 1.6). בלי אימוג׳י. חצים כיווניים מקבלים flip בעברית.
+import { html } from './vendor/standalone.module.js';
+
+const P = {
+  home: '<path d="M4 10.5 12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
+  roots: '<path d="M12 3v6"/><path d="M12 9c0 4-4 4-5.5 7.5"/><path d="M12 9c0 4 4 4 5.5 7.5"/><path d="M12 9v12"/><path d="M8.6 13.2C6 13.5 4.5 15 4 17"/><path d="M15.4 13.2c2.6.3 4.1 1.8 4.6 3.8"/><circle cx="12" cy="3" r="1.2" fill="currentColor"/>',
+  target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+  chart: '<path d="M5 20V10"/><path d="M10 20V5"/><path d="M15 20v-7"/><path d="M20 20v-11"/><path d="M3 20h18"/>',
+  sliders: '<path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="10" cy="17" r="2"/>',
+  back: '<path d="M14.5 6 20 12l-5.5 6"/><path d="M20 12H4"/>',
+  next: '<path d="M9.5 6 4 12l5.5 6"/><path d="M4 12h16"/>',
+  chevron: '<path d="m14 6-6 6 6 6"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  lock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
+  unlock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 7.6-1.7"/>',
+  drop: '<path d="M12 3.5c3.4 4.1 6 7.3 6 10.4a6 6 0 0 1-12 0c0-3.1 2.6-6.3 6-10.4Z"/><path d="M9.2 14.6a2.9 2.9 0 0 0 2.4 2.6"/>',
+  sprout: '<path d="M12 21v-9"/><path d="M12 12c0-3.6-2.6-6-6.5-6 0 3.7 2.6 6 6.5 6Z"/><path d="M12 14.5c0-3.2 2.4-5.5 6.5-5.5 0 3.4-2.5 5.5-6.5 5.5Z"/>',
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+  flask: '<path d="M9.5 3h5"/><path d="M10.5 3v6L5 18.5A1.6 1.6 0 0 0 6.4 21h11.2a1.6 1.6 0 0 0 1.4-2.5L13.5 9V3"/><path d="M7.4 15h9.2"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
+  crosshair: '<circle cx="12" cy="12" r="7.5"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
+  quote: '<path d="M9.5 8C7 8.5 5.5 10.3 5.5 13v4h4.5v-4.5H7.6"/><path d="M18.5 8c-2.5.5-4 2.3-4 5v4H19v-4.5h-2.4"/>',
+  shield: '<path d="M12 3 19 6v5.5c0 4.4-2.9 7.8-7 9.5-4.1-1.7-7-5.1-7-9.5V6l7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+  info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".9" fill="currentColor"/>',
+  alert: '<path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10v4.5"/><circle cx="12" cy="17" r=".9" fill="currentColor"/>',
+  refresh: '<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5V9H15"/>',
+  star: '<path d="m12 3.8 2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-3.9 5.6-.8L12 3.8Z"/>',
+  moon: '<path d="M19.5 14.5A7.5 7.5 0 1 1 9.5 4.5a6 6 0 0 0 10 10Z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
+  folder: '<path d="M3.5 6.5A1.5 1.5 0 0 1 5 5h4.5l2 2.5H19a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18V6.5Z"/><path d="M8 13h8M8 16h5"/>',
+  scale: '<path d="M12 4v16"/><path d="M7 20h10"/><path d="M4.5 7.5h15"/><path d="M6.5 7.5 3.5 14a3 3 0 0 0 6 0L6.5 7.5Z"/><path d="M17.5 7.5 14.5 14a3 3 0 0 0 6 0l-3-6.5Z"/>',
+  pit: '<path d="M3 9h5l2 8h4l2-8h5"/><circle cx="12" cy="5.5" r="1.6"/><path d="M12 7.5v3"/>',
+  magnifier: '<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5.5 5.5"/><path d="M8 10.5h5"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="1.2"/><rect x="13" y="4" width="7" height="7" rx="1.2"/><rect x="4" y="13" width="7" height="7" rx="1.2"/><rect x="13" y="13" width="7" height="7" rx="1.2"/>',
+  chat: '<path d="M4.5 5.5h15v10h-8l-4.5 3.5v-3.5H4.5v-10Z"/><path d="M8 9.5h8M8 12.5h5"/>',
+  pencil: '<path d="m15.5 4.5 4 4L9 19l-5 1 1-5L15.5 4.5Z"/><path d="m13.5 6.5 4 4"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  flame: '<path d="M12 21c3.8 0 6-2.6 6-5.9 0-3.6-2.8-5.4-3.6-9.1-1.8 1.3-2.6 3.1-2.6 4.6-1.2-.7-2-2-2.2-3.4C7.6 9.1 6 11.6 6 15.1 6 18.4 8.2 21 12 21Z"/>',
+  coins: '<ellipse cx="9" cy="7" rx="5" ry="2.5"/><path d="M4 7v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7"/><path d="M10 15.6c.9.6 2.3.9 3.9.9 2.8 0 5-1.1 5-2.5v-4"/><path d="M14 9.4c2.6.2 4.9 1.2 4.9 2.5"/>',
+  landmark: '<path d="M3.5 9 12 4l8.5 5"/><path d="M5 9h14"/><path d="M6.5 9v8M10 9v8M14 9v8M17.5 9v8"/><path d="M4 20h16"/>',
+  scroll: '<path d="M7 4h11a2 2 0 0 1 2 2v1h-4"/><path d="M16 7v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1h10"/><path d="M7 4a2 2 0 0 0-2 2v11"/><path d="M8.5 9h4.5M8.5 12h4.5"/>',
+  atom: '<circle cx="12" cy="12" r="1.4" fill="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(120 12 12)"/>',
+  briefcase: '<rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M3.5 12.5h17"/>',
+  heart: '<path d="M12 19.5s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 6.8a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10-7.5 10Z"/>',
+  lamp: '<path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.3 1 2.2h5.2c0-.9.4-1.7 1-2.2A6 6 0 0 0 12 3Z"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  timeline: '<path d="M12 3v18"/><circle cx="12" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="M14 7h5M5 17h5"/>',
+  external: '<path d="M14 4h6v6"/><path d="m20 4-8.5 8.5"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+};
+
+export function Icon({ name, cls = '', title }) {
+  const inner = (title ? `<title>${title}</title>` : '') + (P[name] || P.info);
+  return html`<svg class=${cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden=${title ? 'false' : 'true'} role=${title ? 'img' : undefined} dangerouslySetInnerHTML=${{ __html: inner }}></svg>`;
+}
+
+// סמל המותג: זרע ושורשים מתפצלים
+export function BrandMark({ cls = 'brand-mark' }) {
+  return html`<svg class=${cls} viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+    <path d="M4 9.5h24" opacity=".35"/>
+    <circle cx="16" cy="6.5" r="2.4" fill="currentColor" stroke="none"/>
+    <path d="M16 9v19"/>
+    <path d="M16 13c0 4-6 4.5-8.5 9.5"/>
+    <path d="M16 13c0 4 6 4.5 8.5 9.5"/>
+    <path d="M11 17.3c-2.6 0-4.7 1.2-6 3.4" opacity=".7"/>
+    <path d="M21 17.3c2.6 0 4.7 1.2 6 3.4" opacity=".7"/>
+    <path d="M16 21c-1.5 1.5-1.8 3.6-1.2 6" opacity=".7"/>
+  </svg>`;
+}
+
+// סימון קו לכל סוג קשר — אותו סימון במפה ובתגיות
+export function ConnGlyph({ type }) {
+  const d = {
+    depth: '<path d="M1 5h20" stroke-width="2.2"/>',
+    twin: '<path d="M1 3h20M1 7h20" stroke-width="1.4"/>',
+    bridge: '<path d="M1 7.5C6 1 16 1 21 7.5" stroke-width="1.8" stroke-dasharray="3.2 2.6"/>',
+    foundation: '<path d="M1 5h20" stroke-width="2" stroke-dasharray="0.1 3.6"/>',
+  }[type] || '';
+  return html`<svg viewBox="0 0 22 10" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true" dangerouslySetInnerHTML=${{ __html: d }}></svg>`;
+}
