@@ -104,6 +104,7 @@ function SettingsSheet({ state, onClose }) {
     <div class="stack">
       <div class="dir-picker">
         ${DIRS.map((d) => html`<button class="dir-card" data-preview=${d.id} aria-pressed=${String(state.dir === d.id)} onClick=${() => set((s) => { s.dir = d.id; })}>
+          <img class="dir-mood" src=${`img/mood-${d.id}.webp`} alt="" loading="lazy" width="1200" height="806" />
           <span class="dir-sample">אבג</span>
           <span class="dir-meta"><strong>${d.he}</strong><span class="faint">${d.desc}</span><span class="dir-fonts en">${d.fonts}</span></span>
         </button>`)}
@@ -168,7 +169,7 @@ function App() {
   const [, setTick] = useState(0);
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState(null);
-  const [sheet, setSheet] = useState(null);
+  const [sheet, setSheet] = useState(() => { try { const q = new URLSearchParams(location.search).get('sheet'); return q === 'settings' || q === 'seen' ? q : null; } catch (e) { return null; } });
   useEffect(() => store.subscribe((s) => setState({ ...s })), []);
   useEffect(() => demoStore.subscribe(() => setTick((x) => x + 1)), []);
   useEffect(() => applyTheme(state), [state.dir, state.mode]);
