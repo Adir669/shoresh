@@ -61,7 +61,7 @@ button { cursor: pointer; }
 ::selection { background: var(--accent-soft); color: var(--ink); }
 
 /* טקסט באנגלית בתוך עברית (שמות מקוריים, הפניות) */
-.en { direction: ltr; unicode-bidi: isolate; display: inline-block; font-family: var(--font-body); }
+.en { direction: ltr; unicode-bidi: isolate; display: inline-block; max-width: 100%; overflow-wrap: anywhere; font-family: var(--font-body); }
 .ltr { direction: ltr; unicode-bidi: isolate; }
 .num { font-variant-numeric: tabular-nums; }
 
@@ -80,7 +80,8 @@ button { cursor: pointer; }
 .muted { color: var(--ink-2); }
 .faint { color: var(--ink-3); }
 .label { font-size: var(--fs-xs); font-weight: var(--fw-strong); color: var(--ink-3); }
-.kicker { font-size: var(--fs-sm); font-weight: var(--fw-strong); color: var(--accent); }
+.kicker { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); font-weight: var(--fw-strong); color: var(--accent); }
+.kicker svg { width: 16px; height: 16px; flex: none; }
 .lead { font-size: var(--fs-lg); line-height: var(--lh-snug); color: var(--ink-2); }
 .screen-title { display: grid; gap: var(--s-2); margin-block-end: var(--s-6); }
 .screen-title p { color: var(--ink-2); max-width: 58ch; }

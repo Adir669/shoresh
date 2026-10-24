@@ -42,7 +42,7 @@ function Runner({ ctx, type, intro }) {
   const [i, setI] = useState(0);
   const [score, setScore] = useState([]);
   if (!items.length) return html`<div class="stack"><${Back} href="#/practice" label="לתרגול" /><${Empty} icon="clock" title="עוד אין תרגילים מהסוג הזה"><span>הם ייכנסו כשהמושגים יעברו בדיקת עובדות.</span></${Empty}></div>`;
-  const done = score.length === items.length;
+  const done = i >= items.length;
   const ex = items[i];
   const record = (ok) => {
     actions.answer(state, ex.id, ok);
@@ -113,7 +113,7 @@ export function WaterRun({ ctx }) {
   const [i, setI] = useState(0);
   const [res, setRes] = useState([]);
   if (!ids.length) return html`<div class="stack"><${Back} href="#/home" /><${Empty} icon="drop" title="אין מה להשקות עכשיו"><span>כל השורשים רטובים. ההשקיה הבאה תופיע בבית כשיגיע הזמן.</span></${Empty}></div>`;
-  const done = res.length === ids.length;
+  const done = i >= ids.length;
   const id = ids[i];
   const record = (ok) => { actions.water(state, id, ok); setRes([...res, ok]); };
   const q = !done && quickFor(id);

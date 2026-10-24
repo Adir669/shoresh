@@ -8,7 +8,11 @@ import { FieldChip, Bar, Empty, fmtDate } from '../ui.js';
 function Fingerprint({ p }) {
   const D = data();
   const L = useMemo(() => layout(D), [D]);
-  const b = L.bounds;
+  const learnedPos = Object.entries(L.pos).filter(([id]) => levelOf(p, id) > 0).map(([, q]) => q);
+  const pts = learnedPos.length ? learnedPos : Object.values(L.pos);
+  const xs = pts.map((q) => q.x), ys = pts.map((q) => q.y);
+  const pad = 70;
+  const b = { x0: Math.min(...xs, -40) - pad, x1: Math.max(...xs, 40) + pad, y0: Math.min(...ys, 0) - pad, y1: Math.max(...ys) + pad };
   return html`<svg class="fingerprint" viewBox=${`${b.x0} ${b.y0} ${b.x1 - b.x0} ${b.y1 - b.y0}`} role="img" aria-label="טביעת האצבע של השורשים שלך">
     <path class="fp-tap" d=${smooth(L.tap)} />
     ${L.laterals.map((l) => {

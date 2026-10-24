@@ -245,6 +245,7 @@
 .essence-lines { list-style: none; padding: 0; margin: 0 0 var(--s-6); display: grid; gap: var(--s-2); }
 .essence-lines li { padding-inline-start: var(--s-4); border-inline-start: 2px solid var(--field); color: var(--ink-2); }
 .example { display: grid; gap: var(--s-3); padding: var(--s-5); border-radius: var(--r-lg); background: var(--surface-2); }
+.example-head { display: grid; gap: 2px; }
 .ex-hint { font-size: var(--fs-xs); }
 .tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-block-end: 2px; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -411,7 +412,8 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .bar-val { font-size: var(--fs-sm); text-align: end; }
 
 /* ── כרטיס גשר ── */
-.bridge { display: grid; gap: var(--s-5); }
+.bridge { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); }
+.bridge-visual > * { min-width: 0; }
 .bridge-visual { display: grid; grid-template-columns: 1fr minmax(70px, 1.2fr) 1fr; align-items: center; gap: var(--s-2); margin-block: var(--s-4); }
 .bridge-node { display: grid; justify-items: center; gap: 6px; text-align: center; }
 .bridge-node strong { line-height: var(--lh-snug); }
@@ -419,7 +421,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .bn-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--field); box-shadow: 0 0 0 7px color-mix(in oklab, var(--field) 18%, transparent); }
 .bridge-root { width: 100%; height: 60px; overflow: visible; }
 .bridge-root path { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 1 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; animation: draw 1.3s var(--ease-out) 0.2s forwards; }
-.bridge-card { display: grid; gap: var(--s-4); padding: var(--s-6); border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--line); }
+.bridge-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding: var(--s-6); border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--line); }
 .bridge-card h1 { font-size: var(--fs-2xl); }
 .bridge-sources ul { margin: var(--s-2) 0 0; padding-inline-start: var(--s-5); font-size: var(--fs-sm); color: var(--ink-2); display: grid; gap: var(--s-1); }
 .bridge-pair { display: grid; gap: var(--s-3); }
@@ -432,6 +434,11 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 @media (min-width: 960px) { .progress-grid { grid-template-columns: 1fr 1.15fr; } }
 .fp-panel { display: grid; gap: var(--s-4); }
 .fingerprint { width: 100%; height: 300px; }
+@media (min-width: 960px) {
+  .fp-panel { grid-template-columns: minmax(0, 1fr) 150px; align-items: center; }
+  .fingerprint { height: 380px; }
+  .fp-panel .stats { grid-template-columns: 1fr; }
+}
 .fp-tap { fill: none; stroke: var(--ink-3); stroke-width: 10; stroke-linecap: round; opacity: 0.45; }
 .fp-lat { fill: none; stroke: var(--line-strong); stroke-linecap: round; }
 .fp-lat.on { stroke: var(--field); }

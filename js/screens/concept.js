@@ -31,7 +31,7 @@ function Planes({ it, sources }) {
   const [pick, setPick] = useState(null);
   const zones = it.zones || [];
   const names = Object.fromEntries(zones.map((z) => [z.id, z.name]));
-  const holes = [[60, 96], [92, 112], [228, 108], [262, 96], [150, 132], [168, 150], [154, 176], [166, 92], [128, 196], [192, 198], [80, 104], [242, 112], [146, 112]];
+  const holes = [[60, 114], [92, 110], [228, 110], [262, 114], [88, 116], [232, 116], [150, 132], [168, 150], [154, 176], [166, 92], [128, 197], [192, 198], [146, 112]]; // על הכנפיים, הגוף והזנב, ולא על המנועים
   const Z = ({ zid, children }) => html`<g class=${`pz${pick ? (zid === it.answer ? ' pz-ok' : zid === pick ? ' pz-bad' : '') : ''}`} data-zone=${zid} onClick=${() => !pick && names[zid] && setPick(zid)} role="button" tabindex="0" aria-label=${names[zid] || zid}>${children}</g>`;
   return html`<div class="planes">
     <p>${it.intro}</p>
@@ -74,7 +74,7 @@ function Example({ c, interests }) {
   const [k, setK] = useState(c.examples[first] ? first : 'daily');
   const e = c.examples[k];
   return html`<div class="example">
-    <div class="row-between"><span class="kicker">דוגמה מהעולם שלך</span><span class="faint ex-hint">הדוגמה הראשונה נבחרת לפי תחומי העניין</span></div>
+    <div class="example-head"><span class="kicker">דוגמה מהעולם שלך</span><span class="faint ex-hint">הלשונית הראשונה נבחרת לפי תחומי העניין שלך</span></div>
     <div class="tabs" role="tablist">${EX_TABS.filter(([key]) => c.examples[key]).map(([key, he]) => html`<button role="tab" aria-selected=${String(k === key)} class=${key === first ? 'tab-mine' : ''} onClick=${() => setK(key)}>${he}</button>`)}</div>
     ${e && html`<div class="example-body" key=${k}><h3>${e.title}</h3><${Paras} text=${e.body} />
       <span class="faint">${e.kind === 'real' ? 'מקרה אמיתי' : 'דוגמה להמחשה'}</span><${Src} ids=${e.sourceIds} sources=${c.sources} /></div>`}
@@ -140,7 +140,7 @@ export function ConceptScreen({ ctx, id }) {
       <span class="faint concept-family">${c.family}</span>
       <h1>${c.title.he}</h1><span class="en title-en">${c.title.en}</span>
       <p class="lead">${c.oneLiner}</p>
-      <div class="row meta"><${Evidence} level=${c.evidence.level} note=${c.evidence.note} /><${Verified} v=${v} />${c.draft && html`<span class="badge badge-gold">טיוטה</span>`}</div>
+      <div class="row meta"><${Evidence} level=${c.evidence.level} note=${c.evidence.note} /><${Verified} v=${v} /></div>
       <div class="concept-ladder"><span class="label">סולם העומק שלך</span><${Ladder} level=${lv} fieldId=${n.field} /></div>
       <div class="seg mode-seg" role="group" aria-label="אורך הקריאה">
         <button aria-pressed=${String(!full)} onClick=${() => setMode('core')}>קריאה קצרה · ${c.readingMinutes.core} דק׳</button>
@@ -211,7 +211,7 @@ export function CheckScreen({ ctx, id }) {
   const rec = c.exercises.filter((e) => ['case', 'hunt'].includes(e.type));
   const pool = [...rec.filter((e) => e.level === 'recognize'), ...rec.filter((e) => e.level !== 'recognize')];
   const items = pool.slice(0, 3);
-  const done = score.length === items.length && items.length > 0;
+  const done = items.length > 0 && i >= items.length;
   const right = score.filter(Boolean).length;
   const passed = done && right >= 2;
   const record = (ok) => {
