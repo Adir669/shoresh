@@ -1,7 +1,7 @@
 // רכיבי ממשק משותפים.
 import { html, useState, useEffect, useRef } from './vendor/standalone.module.js';
-import { Icon, ConnGlyph } from './icons.js';
-import { LEVELS, CTYPES, EVIDENCE, field } from './data.js';
+import { Icon, ConnGlyph, FieldGlyph } from './icons.js';
+import { LEVELS, CTYPES, EVIDENCE, field, emblemOf } from './data.js';
 
 export const KEYS = ['א', 'ב', 'ג', 'ד'];
 
@@ -10,7 +10,19 @@ export const Paras = ({ text }) => String(text || '').split(/\n\n+/).filter(Bool
 
 export function FieldChip({ id, long }) {
   const f = field(id);
-  return html`<span class="chip" data-field=${id}><span class="dot"></span>${f ? (long ? f.he : f.short) : id}</span>`;
+  return html`<span class="chip" data-field=${id}><${FieldGlyph} id=${id} />${f ? (long ? f.he : f.short) : id}</span>`;
+}
+
+// איור אטלס (רגעי חוויה, תחומי עניין): קישוטי, ולכן alt ריק. במצב כהה הוא יושב על לוח נייר.
+export function Ill({ name, size = 'md' }) {
+  return html`<span class=${`ill ill-${size}`}><img src=${`img/atlas/${name}.webp`} alt="" width="480" height="480" loading="lazy" decoding="async" /></span>`;
+}
+
+// סמל המושג (D-20): מטאפורה שעברה את שער האימות. מושג בלי סמל מאומת לא מציג כלום.
+export function Emblem({ id, size = 'md' }) {
+  const e = emblemOf(id);
+  if (!e) return null;
+  return html`<span class=${`ill emblem ill-${size}`} title=${e.metaphor || ''}><img src=${e.src} alt=${e.alt} width="480" height="480" loading="lazy" decoding="async" /></span>`;
 }
 
 export function CType({ type }) {
@@ -77,8 +89,30 @@ export function ToastHost() {
   return m ? html`<div class="toast" role="status" aria-live="polite"><${Icon} name="sprout" />${m}</div>` : null;
 }
 
-export function Empty({ icon = 'sprout', title, children }) {
-  return html`<div class="empty"><${Icon} name=${icon} /><strong>${title}</strong>${children}</div>`;
+// רגע חוויה (D-20): חלון קטן עם איור כשעולים דרגה. השלב הבא מופיע בו כקישור.
+let pushMoment = null;
+export function celebrate(m) { if (pushMoment) pushMoment(m); }
+export function MomentHost() {
+  const [m, setM] = useState(null);
+  pushMoment = setM;
+  if (!m) return null;
+  const close = () => setM(null);
+  return html`<${Sheet} title=${m.title} sub=${m.sub} onClose=${close}>
+    <div class="moment">
+      <${Ill} name=${m.ill || 'mo-depth'} size="lg" />
+      <div class="moment-copy">
+        ${m.text && html`<p>${m.text}</p>`}
+        <div class="row">
+          ${m.href && html`<a class="btn" href=${m.href} onClick=${close}>${m.cta}<${Icon} name="next" /></a>`}
+          <button class=${m.href ? 'btn btn-ghost' : 'btn'} onClick=${close}>${m.href ? 'אחר כך' : 'להמשיך'}</button>
+        </div>
+      </div>
+    </div>
+  </${Sheet}>`;
+}
+
+export function Empty({ icon = 'sprout', ill, title, children }) {
+  return html`<div class=${ill ? 'empty empty-ill' : 'empty'}>${ill ? html`<${Ill} name=${ill} />` : html`<${Icon} name=${icon} />`}<div class="empty-copy"><strong>${title}</strong>${children}</div></div>`;
 }
 
 export function ErrorBanner({ text, onRetry }) {

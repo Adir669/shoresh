@@ -16,13 +16,11 @@
 .welcome-art { order: -1; }
 @media (min-width: 960px) { .welcome-art { order: 0; } }
 .roots-frame { position: relative; max-width: 440px; margin-inline: auto; padding: 6px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line), 0 24px 50px -36px rgb(var(--shadow-rgb) / 0.6); }
-.roots-art { width: 100%; max-height: 34dvh; overflow: visible; }
-@media (min-width: 960px) { .roots-art { max-height: none; } }
 .roots-compass { position: absolute; inset-block-start: 14px; inset-inline-end: 14px; }
-.roots-path { fill: none; stroke: color-mix(in oklab, var(--field) 70%, var(--root)); stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: draw 1.7s var(--ease-out) forwards; animation-delay: calc(var(--i) * 130ms + 250ms); }
-.roots-node { fill: var(--field); stroke: var(--surface); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; animation: pop 0.5s var(--ease-out) forwards; animation-delay: calc(var(--i) * 90ms + 1.2s); }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-@keyframes pop { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
+/* ציור הפתיחה והווידאו השקט שנוצר ממנו (D-20) */
+.plate-media { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--r-sm); background: var(--plate); }
+:root[data-mode="dark"] .plate-media { filter: brightness(0.94) saturate(0.95); }
+@media (max-width: 959px) { .welcome-plate { width: min(100%, calc(32dvh + 14px)); } }
 
 .onb { max-width: 940px; margin-inline: auto; display: grid; gap: var(--s-6); }
 .onb-head { display: grid; gap: var(--s-3); }
@@ -39,8 +37,7 @@
 .interest:hover { border-color: var(--ink-3); }
 .interest:active { transform: scale(0.99); }
 .interest[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 3px var(--accent-soft), inset 0 0 0 4px color-mix(in oklab, var(--accent) 45%, transparent); }
-.interest-icon { display: grid; place-items: center; width: 46px; height: 46px; flex: none; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line); color: var(--accent); }
-.interest-icon svg { width: 24px; height: 24px; }
+.interest .ill-sm { width: 72px; height: 72px; }
 .interest-text { display: grid; flex: 1; gap: 2px; }
 .interest-text span { font-size: var(--fs-sm); color: var(--ink-2); line-height: var(--lh-snug); }
 .interest-order { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: var(--r-xs); border: 1.5px solid var(--line-strong); font-weight: var(--fw-strong); font-size: var(--fs-sm); }
@@ -495,7 +492,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .field-rows { display: grid; gap: var(--s-3); margin-block-start: var(--s-3); }
 .field-row { display: grid; grid-template-columns: minmax(84px, 120px) minmax(0, 1fr) auto; align-items: center; gap: var(--s-3); }
 .fr-name { display: flex; align-items: center; gap: 7px; font-size: var(--fs-sm); font-weight: var(--fw-strong); }
-.fr-name .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--field); flex: none; }
+.fr-name .field-glyph { width: 16px; height: 16px; flex: none; color: var(--field); }
 .fr-count { font-size: var(--fs-xs); color: var(--ink-3); text-align: end; min-width: 76px; }
 .journal { margin-block-start: var(--s-8); }
 .journal-list { list-style: none; margin: 0; padding: 0; border-inline-start: 2px solid var(--line-strong); }
@@ -534,7 +531,22 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .pick-list { display: grid; gap: 2px; max-height: 52dvh; overflow-y: auto; }
 .pick { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3); border: 0; border-radius: var(--r-sm); background: transparent; color: var(--ink); text-align: start; }
 .pick:hover { background: var(--surface-2); }
-.pick .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--field); flex: none; }
+.pick .field-glyph { width: 20px; height: 20px; flex: none; color: var(--field); }
+.pick-field { font-size: var(--fs-xs); }
 .pick-name { flex: 1; font-weight: var(--fw-strong); }
 .seen-title { font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-xl); }
 .check .screen-title, .runner .screen-title { margin-block: var(--s-4) var(--s-5); }
+
+/* ── שכבה חזותית (D-20): הסמל ליד כותרת המושג, בגיליון הצומת, בהשקיה ובנקודות ההתחלה ── */
+.concept-title { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); width: 100%; }
+.concept-title-text { display: grid; gap: var(--s-2); justify-items: start; min-width: 0; }
+.sheet-lead { display: flex; align-items: center; gap: var(--s-4); }
+.sheet-lead .lead { margin: 0; }
+.water-cue { display: flex; align-items: center; gap: var(--s-4); }
+.seed-main { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); width: 100%; }
+.seed-copy { display: grid; gap: var(--s-2); min-width: 0; }
+/* הקראה (ניסוי): נגן בראש דף המושג */
+.listen { display: grid; gap: var(--s-2); width: 100%; max-width: 560px; padding: var(--s-3) var(--s-4); border: 1px dashed var(--line-strong); border-radius: var(--r-sm); background: color-mix(in oklab, var(--surface) 70%, transparent); }
+.listen-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
+.listen-head svg { width: 20px; height: 20px; color: var(--accent); flex: none; }
+.listen audio { width: 100%; max-width: 100%; height: 40px; }

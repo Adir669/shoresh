@@ -50,12 +50,38 @@ const P = {
   lamp: '<path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.3 1 2.2h5.2c0-.9.4-1.7 1-2.2A6 6 0 0 0 12 3Z"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   timeline: '<path d="M12 3v18"/><circle cx="12" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="M14 7h5M5 17h5"/>',
+  headphones: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3.5" y="14" width="4" height="6.5" rx="1.6"/><rect x="16.5" y="14" width="4" height="6.5" rx="1.6"/>',
   external: '<path d="M14 4h6v6"/><path d="m20 4-8.5 8.5"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
 };
 
 export function Icon({ name, cls = '', title }) {
   const inner = (title ? `<title>${title}</title>` : '') + (P[name] || P.info);
   return html`<svg class=${cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden=${title ? 'false' : 'true'} role=${title ? 'img' : undefined} dangerouslySetInnerHTML=${{ __html: inner }}></svg>`;
+}
+
+// סמל לכל אחד מ־18 התחומים, במקום נקודת צבע (D-20). מצויר בקוד: חד בכל גודל, ועובד בבהיר ובכהה.
+const FIELD_GLYPH = {
+  biases: '<path d="M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"/><circle cx="14.6" cy="12" r="2.6"/>',
+  fallacies: '<path d="m10 14.5-1.4 1.4a3.2 3.2 0 0 1-4.5-4.5l2.8-2.8a3.2 3.2 0 0 1 4.5 0"/><path d="m14 9.5 1.4-1.4a3.2 3.2 0 0 1 4.5 4.5l-2.8 2.8a3.2 3.2 0 0 1-4.5 0"/><path d="M8.5 4v2.2M4 8.5h2.2M15.5 20v-2.2M20 15.5h-2.2"/>',
+  statistics: '<path d="M3 19h18"/><path d="M3.5 18.5C7 18.5 8 6 12 6s5 12.5 8.5 12.5"/><path d="M12 6v13" stroke-dasharray="1.6 2.2"/>',
+  decisions: '<path d="M12 21v-7"/><path d="M12 14 6.5 8.5"/><path d="m12 14 5.5-5.5"/><path d="M4.5 10V6.5H8"/><path d="M19.5 10V6.5H16"/>',
+  games: '<circle cx="12" cy="6.2" r="2.6"/><path d="M10 9.4h4l-.9 5.1h-2.2L10 9.4Z"/><path d="M7.5 20.5h9l-1.3-4H8.8l-1.3 4Z"/>',
+  models: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5"/><path d="M12 12v9"/>',
+  rhetoric: '<path d="M4 10v4h3l8.5 4.5v-13L7 10H4Z"/><path d="m7 14 1.2 5h2.4l-1.1-4.4"/><path d="M18.5 9.5a3.5 3.5 0 0 1 0 5"/>',
+  philosophy: '<path d="M4 15.5c0 1.9 3.6 3 8 3s8-1.1 8-3"/><path d="M4 15.5C5.6 13 8.5 12 12 12c2.4 0 4.4.5 5.9 1.4L20.5 11"/><path d="M12 12v-1.6"/><path d="M12 8.6c-1.3-1.3-1.3-2.9 0-4.6 1.3 1.7 1.3 3.3 0 4.6Z"/>',
+  science: '<path d="M9.5 3h5"/><path d="M10.5 3v6L5 18.5A1.6 1.6 0 0 0 6.4 21h11.2a1.6 1.6 0 0 0 1.4-2.5L13.5 9V3"/><path d="M7.4 15h9.2"/>',
+  economics: '<ellipse cx="9" cy="7" rx="5" ry="2.5"/><path d="M4 7v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7"/><path d="M10 15.6c.9.6 2.3.9 3.9.9 2.8 0 5-1.1 5-2.5v-4"/><path d="M14 9.4c2.6.2 4.9 1.2 4.9 2.5"/>',
+  history: '<path d="M6.5 3h11M6.5 21h11"/><path d="M8 3v2.5c0 2.5 4 4 4 6.5s-4 4-4 6.5V21"/><path d="M16 3v2.5c0 2.5-4 4-4 6.5s4 4 4 6.5V21"/><path d="M10 18.5h4" opacity=".7"/>',
+  politics: '<path d="M3.5 9 12 4l8.5 5"/><path d="M5 9h14"/><path d="M6.5 9v8M10 9v8M14 9v8M17.5 9v8"/><path d="M4 20h16"/>',
+  psychology: '<circle cx="9" cy="8" r="3"/><path d="M3.5 19.5c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5"/><circle cx="16.5" cy="9" r="2.4"/><path d="M15.6 14.2c2.9.1 4.9 2.3 4.9 5.3"/>',
+  cultures: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.5 2.4 3.6 5.2 3.6 8.5s-1.1 6.1-3.6 8.5c-2.5-2.4-3.6-5.2-3.6-8.5S9.5 5.9 12 3.5Z"/>',
+  effects: '<circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="8.5" stroke-dasharray="2 2.4"/>',
+  laws: '<path d="m13.6 4.4 6 6"/><path d="m11 7 6 6"/><path d="m12.3 5.7 5 5-3.3 3.3-5-5 3.3-3.3Z"/><path d="M11.6 11.6 4 19.2"/><path d="M13 20.5h8"/>',
+  expressions: '<path d="M9.5 8C7 8.5 5.5 10.3 5.5 13v4h4.5v-4.5H7.6"/><path d="M18.5 8c-2.5.5-4 2.3-4 5v4H19v-4.5h-2.4"/>',
+  paradoxes: '<path d="M12 12c-2-2.6-3.6-4-5.6-4a4 4 0 0 0 0 8c2 0 3.6-1.4 5.6-4s3.6-4 5.6-4a4 4 0 0 1 0 8c-2 0-3.6-1.4-5.6-4Z"/>',
+};
+export function FieldGlyph({ id, cls = 'field-glyph' }) {
+  return html`<svg class=${cls} data-field=${id} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" dangerouslySetInnerHTML=${{ __html: FIELD_GLYPH[id] || '<circle cx="12" cy="12" r="4" fill="currentColor"/>' }}></svg>`;
 }
 
 // סמל המותג (אטלס): טבעת מצפן, קו קרקע, נבט, ושורש שיורד ומתפצל

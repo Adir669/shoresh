@@ -3,33 +3,22 @@ import { html, useState } from '../vendor/standalone.module.js';
 import { store } from '../store.js';
 import { data, seeds, node, fullOf, cardOf, interestFields } from '../data.js';
 import { Icon, BrandMark } from '../icons.js';
-import { FieldChip } from '../ui.js';
-import { Strata, Sprout, Compass } from '../atlas.js';
+import { FieldChip, Ill, Emblem } from '../ui.js';
+import { Compass } from '../atlas.js';
 
-// איור השורשים שנכתבים מעצמם
-export function RootsArt() {
-  const roots = [
-    { d: 'M200 40 C200 120 150 150 120 230 C100 285 70 300 40 360', f: 'biases', w: 3.2 },
-    { d: 'M200 40 C200 130 250 160 285 240 C305 290 335 310 360 370', f: 'games', w: 3 },
-    { d: 'M200 40 C202 140 196 220 200 300 C203 350 196 380 198 420', f: 'fallacies', w: 3.6 },
-    { d: 'M150 150 C120 170 90 175 60 200', f: 'statistics', w: 1.8 },
-    { d: 'M252 158 C285 170 312 168 345 185', f: 'economics', w: 1.8 },
-    { d: 'M120 230 C150 260 160 300 150 340', f: 'decisions', w: 1.6 },
-    { d: 'M285 240 C260 270 255 305 262 345', f: 'philosophy', w: 1.6 },
-    { d: 'M200 300 C230 320 250 330 280 330', f: 'history', w: 1.4 },
-    { d: 'M200 300 C170 322 150 328 118 326', f: 'models', w: 1.4 },
-  ];
-  const nodes = [[120, 230, 'biases', 7], [285, 240, 'games', 7], [200, 300, 'fallacies', 8], [60, 200, 'statistics', 5], [345, 185, 'economics', 5], [150, 340, 'decisions', 5], [262, 345, 'philosophy', 5], [280, 330, 'history', 4], [118, 326, 'models', 4], [40, 360, 'biases', 4], [360, 370, 'games', 4], [198, 420, 'fallacies', 5]];
-  return html`<div class="roots-frame corners">
-    <svg class="roots-art" viewBox="0 0 400 440" aria-hidden="true">
-      <defs><clipPath id="ra-clip"><rect x="0" y="0" width="400" height="440" rx="4" /></clipPath></defs>
-      <g clip-path="url(#ra-clip)">
-        <${Strata} x0=${0} x1=${400} amp=${5} seed=${0.55} layers=${[{ y0: 40, y1: 175, n: 1 }, { y0: 175, y1: 305, n: 2 }, { y0: 305, y1: 440, n: 3 }]} />
-        ${roots.map((r, i) => html`<path d=${r.d} data-field=${r.f} class="roots-path" style=${`--i:${i};stroke-width:${r.w + 0.6}`} pathLength="1" />`)}
-        ${nodes.map(([x, y, f, r], i) => html`<circle cx=${x} cy=${y} r=${r} data-field=${f} class="roots-node" style=${`--i:${i}`} />`)}
-        <${Sprout} x=${200} y=${40} s=${1.25} />
-      </g>
-    </svg>
+// ציור הפתיחה (D-20) ווידאו שקט של 5 שניות שנוצר ממנו וחוזר על עצמו בלי קפיצה.
+// מי שביקש פחות תנועה רואה את הציור בלבד, וכך גם כשהווידאו לא נטען (התמונה היא ה־poster).
+const reducedMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+export function WelcomePlate() {
+  const still = reducedMotion();
+  const start = (v) => { if (!v) return; v.muted = true; const p = v.play && v.play(); if (p && p.catch) p.catch(() => {}); };
+  return html`<div class="roots-frame welcome-plate corners">
+    ${still
+      ? html`<img class="plate-media" src="img/atlas/welcome-plate.webp" srcset="img/atlas/welcome-plate-560.webp 560w, img/atlas/welcome-plate.webp 960w" sizes="(min-width: 960px) 440px, 92vw" alt="" width="960" height="960" />`
+      : html`<video class="plate-media" ref=${start} autoplay muted loop playsinline preload="auto" poster="img/atlas/welcome-plate.webp" aria-hidden="true" width="960" height="960">
+          <source src="img/atlas/welcome-loop.webm" type="video/webm" />
+          <source src="img/atlas/welcome-loop.mp4" type="video/mp4" />
+        </video>`}
     <span class="roots-compass"><${Compass} size=${42} /></span>
   </div>`;
 }
@@ -54,7 +43,7 @@ export function Onboarding({ ctx }) {
         </ul>
         <div class="row" style="--i:4"><button class="btn" onClick=${() => setStep(1)}>בוא נתחיל<${Icon} name="next" /></button></div>
       </div>
-      <div class="welcome-art"><${RootsArt} /></div>
+      <div class="welcome-art"><${WelcomePlate} /></div>
     </section>`;
   }
 
@@ -69,7 +58,7 @@ export function Onboarding({ ctx }) {
         ${D.interests.interests.map((it, i) => {
           const n = picked.indexOf(it.id);
           return html`<button class="interest" style=${`--i:${i}`} aria-pressed=${String(n >= 0)} onClick=${() => toggle(it.id)}>
-            <span class="interest-icon"><${Icon} name=${it.icon} /></span>
+            <${Ill} name=${`int-${it.id}`} size="sm" />
             <span class="interest-text"><strong>${it.he}</strong><span>${it.desc}</span></span>
             <span class="interest-order" aria-hidden="true">${n >= 0 ? n + 1 : ''}</span>
           </button>`;
@@ -96,8 +85,7 @@ export function Onboarding({ ctx }) {
         const n = node(id); const c = fullOf(id) || cardOf(id);
         return html`<button class="tile tile-field seed" data-field=${n.field} style=${`--i:${i}`} onClick=${() => finish(`#/c/${id}`)}>
           <div class="row-between"><${FieldChip} id=${n.field} long=${true} />${i === 0 && html`<span class="badge badge-gold"><${Icon} name="star" />מומלץ</span>`}</div>
-          <h2>${n.he}</h2>
-          <p class="muted">${c ? c.oneLiner : 'בכתיבה ובבדיקה'}</p>
+          <div class="seed-main"><div class="seed-copy"><h2>${n.he}</h2><p class="muted">${c ? c.oneLiner : 'בכתיבה ובבדיקה'}</p></div><${Emblem} id=${id} size="md" /></div>
           <span class="seed-go">להתחיל כאן<${Icon} name="next" /></span>
           ${wanted.has(n.field) ? null : html`<span class="faint seed-note">גילוי: מחוץ לתחומים שבחרת</span>`}
         </button>`;

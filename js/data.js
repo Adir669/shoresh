@@ -53,6 +53,10 @@ export const edgesIn = (id) => D.inn[id] || [];
 export const edge = (from, to) => (D.out[from] || []).find((e) => e.to === to) || null;
 export const interestById = (id) => D.interests.interests.find((x) => x.id === id);
 export const sourcesOf = (id) => (fullOf(id) || cardOf(id) || {}).sources || [];
+// סמל המושג (D-20): קיים רק אם יחידת visuals עברה את שער האימות בבנייה
+export const emblemOf = (id) => (D.emblems && D.emblems[id]) || null;
+// הקראה (D-20, ניסוי): רק כשהקובץ קשור בטביעה לנוסח המאומת הנוכחי
+export const audioOf = (id) => (D.audio && D.audio[id]) || null;
 export const verificationOf = (id) => {
   const n = D.byId[id];
   return n ? D.verification[n.unit] || null : null;

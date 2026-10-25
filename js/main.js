@@ -1,9 +1,9 @@
 // נקודת הכניסה: טעינה, ניתוב לפי hash, המסגרת (סרגלים), והגיליונות הגלובליים.
 import { html, render, useState, useEffect } from './vendor/standalone.module.js';
 import { store } from './store.js';
-import { loadContent, progressOf, demoStore, actions, data, levelOf, title } from './data.js';
-import { Icon, BrandMark } from './icons.js';
-import { Sheet, ToastHost, toast, ErrorBanner, FieldChip } from './ui.js';
+import { loadContent, progressOf, demoStore, actions, data, levelOf, title, field } from './data.js';
+import { Icon, BrandMark, FieldGlyph } from './icons.js';
+import { Sheet, ToastHost, toast, ErrorBanner, MomentHost, celebrate } from './ui.js';
 import { Onboarding } from './screens/onboarding.js';
 import { Home } from './screens/home.js';
 import { MapScreen } from './screens/map.js';
@@ -125,15 +125,18 @@ function SeenSheet({ state, onClose, preset }) {
     .sort((a, b) => levelOf(p, b.id) - levelOf(p, a.id))
     .slice(0, q ? 12 : 8);
   const save = () => {
+    const before = levelOf(p, pick);
     actions.seen(state, pick, note);
     onClose();
-    toast(`נרשם ביומן: ${title(pick)}`);
+    // מי שכבר מזהה ופוגש את המושג בחיים מגיע לדרגה העמוקה: "משתמש"
+    if (before >= 3 && before < 5) celebrate({ title: 'עלית דרגה: משתמש', sub: title(pick), text: 'פגשת את המושג בחיים ורשמת אותו. זו הדרגה העמוקה בסולם: הידע הפך לזיהוי.' });
+    else toast(`נרשם ביומן: ${title(pick)}`);
   };
   return html`<${Sheet} title="ראיתי את זה היום" sub="איפה פגשת מושג בחיים? כל רישום כזה מקבע את הזיכרון יותר מכל תרגיל." onClose=${onClose}>
     ${!pick ? html`<div class="stack">
       <input class="input" type="search" dir="auto" placeholder="חיפוש מושג" value=${q} onInput=${(e) => setQ(e.target.value)} aria-label="חיפוש מושג" />
       <div class="pick-list">${list.map((n) => html`<button class="pick" data-field=${n.field} onClick=${() => setPick(n.id)}>
-        <span class="dot"></span><span class="pick-name">${n.he}</span><${FieldChip} id=${n.field} />
+        <${FieldGlyph} id=${n.field} /><span class="pick-name">${n.he}</span><span class="faint pick-field">${field(n.field) ? field(n.field).short : ''}</span>
       </button>`)}</div>
     </div>` : html`<div class="stack">
       <div class="row"><strong class="seen-title">${title(pick)}</strong><button class="btn btn-quiet btn-sm" onClick=${() => setPick(null)}>להחליף</button></div>
@@ -213,6 +216,7 @@ function App() {
     ${sheet === 'settings' && html`<${SettingsSheet} state=${state} onClose=${() => setSheet(null)} />`}
     ${(sheet === 'seen' || (sheet && sheet.seen)) && html`<${SeenSheet} state=${state} preset=${sheet.seen} onClose=${() => setSheet(null)} />`}
     <${ToastHost} />
+    <${MomentHost} />
   </div>`;
 }
 

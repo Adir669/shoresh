@@ -1,7 +1,7 @@
 // מסך 2: בית — חתך הקרקע של המשתמש, "לאן עכשיו", השקיה קצרה מול צמיחה ארוכה, "ראיתי את זה היום".
 import { html, useRef, useState, useEffect } from '../vendor/standalone.module.js';
 import { data, node, title, fullOf, cardOf, suggestions, dueList, levelOf, CTYPES, LEVELS } from '../data.js';
-import { Icon } from '../icons.js';
+import { Icon, FieldGlyph } from '../icons.js';
 import { FieldChip, fmtToday, fmtDate, fmtRel } from '../ui.js';
 import { Strata, growRoot, Sprout, Compass, ScaleBar, Ticks } from '../atlas.js';
 
@@ -59,7 +59,7 @@ function CrossSection({ anchors }) {
     </svg>
     ${roots.map((r) => html`<a class=${r.toLeft ? 'stamp xsec-tag to-left' : 'stamp xsec-tag'} data-field=${node(r.a.id).field} href=${`#/c/${r.a.id}`}
       style=${`left:${((r.pin[0] + (r.toLeft ? -18 : 18)) / W * 100).toFixed(2)}%;top:${r.pin[1].toFixed(1)}px;max-width:${Math.max(90, Math.round(r.toLeft ? r.pin[0] - 26 : W - r.pin[0] - 26))}px`}>
-      <span class="dot"></span>${title(r.a.id)}<span class="lv">· ${r.a.lv ? LEVELS[r.a.lv - 1].he : 'נקודת התחלה'}</span>
+      <${FieldGlyph} id=${node(r.a.id).field} />${title(r.a.id)}<span class="lv">· ${r.a.lv ? LEVELS[r.a.lv - 1].he : 'נקודת התחלה'}</span>
     </a>`)}
     <div class="xsec-tools"><${ScaleBar} /><${Compass} size=${40} /></div>
   </div>`;

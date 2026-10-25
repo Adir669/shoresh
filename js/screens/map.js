@@ -5,7 +5,7 @@ import { store } from '../store.js';
 import { data, node, field, title, fullOf, cardOf, seeds, nodeState, levelOf, caughtCount, edgesOut, lockedBy, isFull, LEVELS, CTYPES } from '../data.js';
 import { layout, smooth, arc, ORDER } from '../maplayout.js';
 import { Icon, ConnGlyph } from '../icons.js';
-import { Sheet, FieldChip, CType, Ladder } from '../ui.js';
+import { Sheet, FieldChip, CType, Ladder, Emblem } from '../ui.js';
 import { Strata, Sprout, Compass, ScaleBar } from '../atlas.js';
 
 // חותמת ב־SVG: מודדים את הטקסט אחרי הציור (וגם אחרי שהפונטים נטענו) ומתאימים את המלבן
@@ -114,7 +114,7 @@ function NodeSheet({ id, p, st, onClose }) {
     <div class="stack">
       <div class="row"><${FieldChip} id=${n.field} long=${true} /><span class="badge">${STATE_TEXT[st]}</span>${isFull(id) ? html`<span class="badge badge-accent">מושג מלא</span>` : html`<span class="badge">כרטיס</span>`}</div>
       ${lv > 0 && html`<${Ladder} level=${lv} fieldId=${n.field} />`}
-      ${c && html`<p class="lead">${c.oneLiner}</p>`}
+      ${c && html`<div class="sheet-lead"><${Emblem} id=${id} size="md" /><p class="lead">${c.oneLiner}</p></div>`}
       ${locks.length > 0 && html`<p class="muted">כדי לפתוח: בדיקת זיהוי של ${locks.map(title).join(' או ')}.</p>`}
       <div class="row">
         ${st !== 'fog' && st !== 'locked' && html`<a class="btn" href=${`#/c/${id}`}><${Icon} name="book" />${lv > 0 ? 'לחזור למושג' : 'ללמוד'}</a>`}

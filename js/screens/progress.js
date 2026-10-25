@@ -2,7 +2,7 @@
 import { html, useMemo } from '../vendor/standalone.module.js';
 import { data, node, title, levelOf, LEVELS } from '../data.js';
 import { layout, smooth } from '../maplayout.js';
-import { Icon } from '../icons.js';
+import { Icon, FieldGlyph } from '../icons.js';
 import { FieldChip, Bar, Empty, fmtDate } from '../ui.js';
 import { Strata } from '../atlas.js';
 
@@ -103,7 +103,7 @@ export function ProgressScreen({ ctx }) {
         <div class="field-rows">${D.fields.fields.filter((f) => f.group === g.id).map((f) => {
           const n = ids.filter((id) => node(id).field === f.id && levelOf(p, id) > 0).length;
           return html`<div class="field-row" data-field=${f.id}>
-            <span class="fr-name"><span class="dot"></span>${f.short}</span>
+            <span class="fr-name"><${FieldGlyph} id=${f.id} />${f.short}</span>
             <${Bar} value=${n} max=${f.planned} fieldId=${f.id} />
             <span class="fr-count num">${n} מתוך ${f.planned}</span>
           </div>`;
@@ -116,7 +116,7 @@ export function ProgressScreen({ ctx }) {
       ${p.journal.length ? html`<ol class="journal-list">${p.journal.map((j) => html`<li class="journal-item" data-field=${node(j.concept) ? node(j.concept).field : ''}>
         <span class="ji-date faint">${fmtDate(j.at)}</span>
         <div><a class="ji-title" href=${`#/c/${j.concept}`}>${title(j.concept)}</a>${j.note && html`<p>${j.note}</p>`}</div>
-      </li>`)}</ol>` : html`<${Empty} icon="eye" title="היומן עוד ריק"><span>בפעם הבאה שתפגוש מושג בחיים, רשום אותו כאן. זה הרגע שבו הידע הופך לזיהוי.</span><button class="btn btn-sm" onClick=${() => openSheet('seen')}>רישום ראשון</button></${Empty}>`}
+      </li>`)}</ol>` : html`<${Empty} ill="mo-journal" title="היומן עוד ריק"><span>בפעם הבאה שתפגוש מושג בחיים, רשום אותו כאן. זה הרגע שבו הידע הופך לזיהוי.</span><button class="btn btn-sm" onClick=${() => openSheet('seen')}>רישום ראשון</button></${Empty}>`}
     </section>
   </div>`;
 }

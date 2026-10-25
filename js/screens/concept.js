@@ -1,13 +1,34 @@
 // מסך 4: דף מושג בשכבות (ומסך 8: דוגמאות שמתחלפות לפי תחומי העניין), דף כרטיס, ובדיקת זיהוי.
 import { html, useState, useEffect } from '../vendor/standalone.module.js';
-import { node, field, title, fullOf, cardOf, levelOf, edgesOut, exampleKey, verificationOf, actions, isFull, EVIDENCE, LEVELS } from '../data.js';
+import { node, field, title, fullOf, cardOf, levelOf, edgesOut, exampleKey, verificationOf, actions, isFull, audioOf, EVIDENCE, LEVELS } from '../data.js';
 import { Icon } from '../icons.js';
-import { Paras, FieldChip, CType, Evidence, Verified, Ladder, Back, Empty, Feedback, toast, fmtHistDate } from '../ui.js';
+import { Paras, FieldChip, CType, Evidence, Verified, Ladder, Back, Empty, Feedback, toast, fmtHistDate, Emblem, Ill, celebrate } from '../ui.js';
 import { ExerciseView } from '../exercises.js';
 
 const EX_TABS = [['daily', 'יומיום'], ['finance', 'כסף'], ['politics', 'פוליטיקה'], ['history', 'היסטוריה'], ['science', 'מדע'], ['business', 'עבודה'], ['relationships', 'יחסים']];
 const DOMAIN = { history: 'היסטוריה', politics: 'פוליטיקה', business: 'עסקים', finance: 'כסף', science: 'מדע', health: 'בריאות', law: 'משפט', tech: 'טכנולוגיה', sport: 'ספורט', daily: 'יומיום', military: 'צבא וביטחון' };
 const HOOK_KIND = { experiment: 'ניסוי', story: 'סיפור', case: 'מקרה', riddle: 'חידה' };
+
+// "הבנתי": עלייה לדרגת "מבין". רגע חוויה עם השלב הבא, רק כשהדרגה באמת עולה (D-20)
+function markRead(state, id, lv, full) {
+  actions.read(state, id);
+  if (lv >= 2) { toast(`${title(id)}: כבר בדרגת "מבין"`); return; }
+  celebrate(full
+    ? { title: 'עלית דרגה: מבין', sub: title(id), text: 'השורש ירד שכבה. השלב הבא הוא בדיקת זיהוי: שלושה מקרים חדשים, ושניים נכונים מפצלים את השורש.', href: `#/check/${id}`, cta: 'לבדיקת הזיהוי' }
+    : { title: 'עלית דרגה: מבין', sub: title(id), text: 'השורש ירד שכבה. מכאן, כשתפגוש את המושג בחיים, רשום אותו ביומן: זה מה שמקבע אותו.' });
+}
+
+// הקראה (D-20, ניסוי): הפתיחה והתמצית בקול. מוצגת רק כשהקובץ קשור בטביעה לנוסח המאומת.
+function Listen({ id }) {
+  const a = audioOf(id);
+  if (!a) return null;
+  const min = Math.max(1, Math.round(a.seconds / 60));
+  return html`<div class="listen">
+    <div class="listen-head"><${Icon} name="headphones" /><strong>להאזין לפתיחה ולתמצית</strong><span class="faint num">כ־${min} דק׳</span>${a.status === 'experiment' && html`<span class="badge badge-gold">ניסוי</span>`}</div>
+    <audio controls preload="none" src=${a.src}></audio>
+    ${a.status === 'experiment' && html`<span class="faint">קול ממוחשב שמקריא את הטקסט המאומת כלשונו. אם שם או מספר נשמעים לא נכון, זה בדיוק מה שהניסוי בודק.</span>`}
+  </div>`;
+}
 
 const scrollTo = (id) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 
@@ -100,18 +121,20 @@ function CardPage({ ctx, id }) {
   return html`<article class="concept" data-field=${n.field}>
     <header class="concept-head">
       <div class="row-between"><${Back} href=${`#/map/${id}`} label="למפה" /><${FieldChip} id=${n.field} long=${true} /></div>
-      <span class="badge">כרטיס קצר</span>
-      <h1>${n.he}</h1><span class="en title-en">${n.en}</span>
+      <div class="concept-title">
+        <div class="concept-title-text"><span class="badge">כרטיס קצר</span><h1>${n.he}</h1><span class="en title-en">${n.en}</span></div>
+        <${Emblem} id=${id} size="lg" />
+      </div>
       ${c ? html`<p class="lead">${c.oneLiner}</p>` : null}
       ${c && html`<div class="row meta"><${Evidence} level=${c.evidence.level} note=${c.evidence.note} /><${Verified} v=${verificationOf(id)} /></div>`}
       <${Ladder} level=${lv} fieldId=${n.field} />
     </header>
-    ${!c ? html`<${Empty} icon="clock" title="המושג הזה עוד בכתיבה ובבדיקה"><span>הוא ייכנס רק אחרי שבודק עובדות עצמאי יאשר כל טענה בו.</span></${Empty}>` : html`<div class="read stack-lg">
+    ${!c ? html`<${Empty} ill="mo-review" title="המושג הזה עוד בכתיבה ובבדיקה"><span>הוא ייכנס רק אחרי שבודק עובדות עצמאי יאשר כל טענה בו.</span></${Empty}>` : html`<div class="read stack-lg">
       <div class="stack"><${Paras} text=${c.body} /></div>
       <div class="example"><span class="kicker">${c.example.kind === 'real' ? 'מקרה אמיתי' : 'דוגמה'}</span><p>${c.example.text}</p><${Src} ids=${c.example.sourceIds} sources=${c.sources} /></div>
       <p class="muted evidence-note"><strong>${EVIDENCE[c.evidence.level].he}: </strong>${c.evidence.note}</p>
       <div class="row">
-        <button class="btn" onClick=${() => { actions.read(state, id); toast(`${n.he}: דרגה "מבין"`); }}><${Icon} name="check" />הבנתי</button>
+        <button class="btn" onClick=${() => markRead(state, id, lv, false)}><${Icon} name="check" />הבנתי</button>
         <button class="btn btn-ghost" onClick=${() => openSheet({ seen: id })}><${Icon} name="eye" />ראיתי את זה היום</button>
       </div>
       <${Connections} id=${id} lv=${3} />
@@ -129,7 +152,7 @@ export function ConceptScreen({ ctx, id }) {
   const lv = levelOf(p, id);
   const [mode, setMode] = useState('full');
   useEffect(() => { actions.visit(state, id); }, [id]);
-  if (!c) return html`<div class="stack"><${Back} href="#/map" /><h1>${n.he}</h1><${Empty} icon="clock" title="המושג הזה עוד בכתיבה ובבדיקה"><span>הוא ייכנס רק אחרי שבודק עובדות עצמאי יאשר כל טענה בו.</span></${Empty}></div>`;
+  if (!c) return html`<div class="stack"><${Back} href="#/map" /><h1>${n.he}</h1><${Empty} ill="mo-review" title="המושג הזה עוד בכתיבה ובבדיקה"><span>הוא ייכנס רק אחרי שבודק עובדות עצמאי יאשר כל טענה בו.</span></${Empty}></div>`;
   const v = verificationOf(id);
   const full = mode === 'full';
   const it = c.interactive;
@@ -137,10 +160,13 @@ export function ConceptScreen({ ctx, id }) {
   return html`<article class="concept" data-field=${n.field}>
     <header class="concept-head">
       <div class="row-between"><${Back} href=${`#/map/${id}`} label="למפה" /><${FieldChip} id=${n.field} long=${true} /></div>
-      <span class="faint concept-family">${c.family}</span>
-      <h1>${c.title.he}</h1><span class="en title-en">${c.title.en}</span>
+      <div class="concept-title">
+        <div class="concept-title-text"><span class="faint concept-family">${c.family}</span><h1>${c.title.he}</h1><span class="en title-en">${c.title.en}</span></div>
+        <${Emblem} id=${id} size="lg" />
+      </div>
       <p class="lead">${c.oneLiner}</p>
       <div class="row meta"><${Evidence} level=${c.evidence.level} note=${c.evidence.note} /><${Verified} v=${v} /></div>
+      <${Listen} id=${id} />
       <div class="concept-ladder"><span class="label">סולם העומק שלך</span><${Ladder} level=${lv} fieldId=${n.field} /></div>
       <div class="seg mode-seg" role="group" aria-label="אורך הקריאה">
         <button aria-pressed=${String(!full)} onClick=${() => setMode('core')}>קריאה קצרה · ${c.readingMinutes.core} דק׳</button>
@@ -191,7 +217,7 @@ export function ConceptScreen({ ctx, id }) {
           <p class="muted">${c.exercises.length} תרגילים במושג הזה. בדיקת הזיהוי בוחרת שלושה מקרים חדשים, ושניים נכונים מתוכם פותחים את הענפים.</p>
           ${it && it.kind === 'pd-sim' && html`<a class="tile pd-cta" href="#/practice/pd"><${Icon} name="grid" /><div><strong>לשחק את הדילמה</strong><p class="muted">עשרה סיבובים מול אסטרטגיה נסתרת, ואחר כך טורניר.</p></div></a>`}
           <div class="row">
-            ${lv < 2 && html`<button class="btn btn-ghost" onClick=${() => { actions.read(state, id); toast(`${n.he}: דרגה "מבין"`); }}><${Icon} name="check" />סיימתי לקרוא</button>`}
+            ${lv < 2 && html`<button class="btn btn-ghost" onClick=${() => markRead(state, id, lv, true)}><${Icon} name="check" />סיימתי לקרוא</button>`}
             <a class="btn" href=${`#/check/${id}`}><${Icon} name="target" />${lv >= 3 ? 'בדיקת זיהוי נוספת' : 'לבדיקת הזיהוי'}</a>
             <button class="btn btn-quiet" onClick=${() => openSheet({ seen: id })}><${Icon} name="eye" />ראיתי את זה היום</button>
           </div>
@@ -207,7 +233,7 @@ export function CheckScreen({ ctx, id }) {
   const c = fullOf(id);
   const [i, setI] = useState(0);
   const [score, setScore] = useState([]);
-  if (!c) return html`<${Empty} icon="alert" title="אין עדיין תרגילים למושג הזה" />`;
+  if (!c) return html`<${Empty} ill="mo-seeds" title="אין עדיין תרגילים למושג הזה" />`;
   const rec = c.exercises.filter((e) => ['case', 'hunt'].includes(e.type));
   const pool = [...rec.filter((e) => e.level === 'recognize'), ...rec.filter((e) => e.level !== 'recognize')];
   const items = pool.slice(0, 3);
@@ -232,6 +258,7 @@ export function CheckScreen({ ctx, id }) {
       <${ExerciseView} ex=${items[i]} onDone=${record} />
       ${score.length > i && html`<div class="row next-row"><button class="btn" onClick=${() => setI(i + 1)}>${i + 1 < items.length ? 'למקרה הבא' : 'לתוצאה'}<${Icon} name="next" /></button></div>`}
     </div>` : html`<div class="result stack">
+      ${passed && html`<${Ill} name="mo-branch" size="lg" />`}
       <div class=${`result-badge${passed ? ' ok' : ''}`}><${Icon} name=${passed ? 'unlock' : 'refresh'} /><strong>${right} מתוך ${items.length}</strong></div>
       <h2>${passed ? 'זיהית. השורש מתפצל.' : 'כמעט. עוד סיבוב קטן.'}</h2>
       <p class="muted">${passed ? 'הגעת לדרגת "מזהה". אלה הענפים שנפתחו עכשיו:' : 'כדאי לעבור שוב על "איך מזהים" ועל התאומים, ולנסות שוב.'}</p>
