@@ -3,6 +3,9 @@ import { html, useState } from '../vendor/standalone.module.js';
 import { data, node, title, fullOf, cardOf, exercisesOf, dueList, actions, levelOf } from '../data.js';
 import { Icon } from '../icons.js';
 import { FieldChip, Back, Empty, Feedback, toast, fmtRel, Emblem, Ill } from '../ui.js';
+
+// כמה נקודות נצברו מאז תחילת הסבב (D-21)
+const Earned = ({ n }) => (n > 0 ? html`<span class="result-badge"><${Icon} name="star" /><strong class="num">+${n} נקודות</strong></span>` : null);
 import { ExerciseView, FirstFallEx, TYPE_NAME } from '../exercises.js';
 
 // לכל סוג תרגול איור משלו (Higgsfield, בסגנון האטלס): app/img/atlas/ill-<id>.webp
@@ -43,6 +46,7 @@ export function Practice({ ctx }) {
 function Runner({ ctx, type, intro }) {
   const { state, p } = ctx;
   const [items] = useState(() => exercisesOf(type, p).slice(0, 5));
+  const [start] = useState(() => p.points || 0);
   const [i, setI] = useState(0);
   const [score, setScore] = useState([]);
   const [leveled, setLeveled] = useState([]);
@@ -68,7 +72,7 @@ function Runner({ ctx, type, intro }) {
       ${score.length > i && html`<div class="row next-row"><button class="btn" onClick=${() => setI(i + 1)}>${i + 1 < items.length ? 'לתרגיל הבא' : 'לסיכום'}<${Icon} name="next" /></button></div>`}
     </div>` : html`<div class="result stack">
       ${leveled.length > 0 && html`<${Ill} name="mo-depth" size="lg" />`}
-      <div class="result-badge ok"><${Icon} name="target" /><strong>${score.filter(Boolean).length} מתוך ${items.length}</strong></div>
+      <div class="row"><div class="result-badge ok"><${Icon} name="target" /><strong>${score.filter(Boolean).length} מתוך ${items.length}</strong></div><${Earned} n=${(p.points || 0) - start} /></div>
       <h2>סבב הושלם</h2>
       ${leveled.length > 0 && html`<p class="muted">עלית לדרגת "מבחין" ב${leveled.map(title).join(', ')}: הבחנת בינו לבין מושג קרוב. הדרגה הבאה, "משתמש", מגיעה כשתפגוש אותו בחיים ותרשום אותו ביומן.</p>`}
       <div class="row"><a class="btn" href="#/practice">למרכז התרגול</a><a class="btn btn-ghost" href="#/map">למפה</a></div>
@@ -121,15 +125,16 @@ function RecallCard({ id, onDone }) {
 export function WaterRun({ ctx }) {
   const { state, p } = ctx;
   const [ids] = useState(() => dueList(p).slice(0, 6));
+  const [start] = useState(() => p.points || 0);
   const [i, setI] = useState(0);
   const [res, setRes] = useState([]);
-  if (!ids.length) return html`<div class="stack"><${Back} href="#/home" /><${Empty} ill="mo-water" title="אין מה להשקות עכשיו"><span>כל השורשים רטובים. ההשקיה הבאה תופיע בבית כשיגיע הזמן.</span></${Empty}></div>`;
+  if (!ids.length) return html`<div class="stack"><${Back} href="#/home" label="למסלול" /><${Empty} ill="mo-water" title="אין מה להשקות עכשיו"><span>כל השורשים רטובים. ההשקיה הבאה תופיע במסלול כשיגיע הזמן.</span></${Empty}></div>`;
   const done = i >= ids.length;
   const id = ids[i];
   const record = (ok) => { actions.water(state, id, ok); setRes([...res, ok]); };
   const q = !done && quickFor(id);
   return html`<div class="runner read">
-    <div class="row-between"><${Back} href="#/home" /><span class="faint num">${Math.min(res.length + 1, ids.length)} מתוך ${ids.length}</span></div>
+    <div class="row-between"><${Back} href="#/home" label="למסלול" /><span class="faint num">${Math.min(res.length + 1, ids.length)} מתוך ${ids.length}</span></div>
     <div class="screen-title"><span class="kicker"><${Icon} name="drop" /> השקיה</span><h1>חוזרים בדיוק על מה שמתחיל להישכח</h1></div>
     <div class="dots">${ids.map((_, k) => html`<span class=${`dot-step${k < res.length ? (res[k] ? ' ok' : ' bad') : k === i ? ' now' : ''}`}></span>`)}</div>
     ${!done ? html`<div key=${i} class="stack">
@@ -139,10 +144,10 @@ export function WaterRun({ ctx }) {
       ${res.length > i && html`<div class="row next-row"><button class="btn" onClick=${() => setI(i + 1)}>${i + 1 < ids.length ? 'הבא' : 'לסיכום'}<${Icon} name="next" /></button></div>`}
     </div>` : html`<div class="result stack">
       <${Ill} name="mo-water" size="lg" />
-      <div class="result-badge ok"><${Icon} name="drop" /><strong>${res.filter(Boolean).length} מתוך ${ids.length}</strong></div>
+      <div class="row"><div class="result-badge ok"><${Icon} name="drop" /><strong>${res.filter(Boolean).length} מתוך ${ids.length}</strong></div><${Earned} n=${(p.points || 0) - start} /></div>
       <h2>השורשים הושקו</h2>
       <p class="muted">מה שזכרת יחזור בעוד כמה ימים, ומה שפחות יחזור מחר.</p>
-      <div class="row"><a class="btn" href="#/home">לבית</a><a class="btn btn-ghost" href="#/map">למפה</a></div>
+      <div class="row"><a class="btn" href="#/home">להמשיך במסלול<${Icon} name="next" /></a><a class="btn btn-ghost" href="#/map">למפה</a></div>
     </div>`}
   </div>`;
 }

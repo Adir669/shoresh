@@ -1,11 +1,12 @@
 // נקודת הכניסה: טעינה, ניתוב לפי hash, המסגרת (סרגלים), והגיליונות הגלובליים.
 import { html, render, useState, useEffect } from './vendor/standalone.module.js';
 import { store } from './store.js';
-import { loadContent, progressOf, demoStore, actions, data, levelOf, title, field } from './data.js';
+import { loadContent, progressOf, demoStore, actions, data, levelOf, title, field, levelInfo, POINTS, pointsFromProgress } from './data.js';
 import { Icon, BrandMark, FieldGlyph } from './icons.js';
 import { Sheet, ToastHost, toast, ErrorBanner, MomentHost, celebrate } from './ui.js';
 import { Onboarding } from './screens/onboarding.js';
-import { Home } from './screens/home.js';
+import { PathScreen } from './screens/path.js';
+import { StationScreen } from './screens/station.js';
 import { MapScreen } from './screens/map.js';
 import { ConceptScreen, CheckScreen } from './screens/concept.js';
 import { Practice, CaseRun, DuelRun, FirstFall, HuntRun, WaterRun } from './screens/practice.js';
@@ -58,13 +59,14 @@ function useHash() {
 }
 const parse = (h) => { const parts = h.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent); return { name: parts[0] || 'home', args: parts.slice(1) }; };
 
+// מסך הבית הוא המסלול (D-21). הנתיב נשאר #/home, כדי שכל קישור "חזרה" ימשיך לעבוד.
 const TABS = [
-  { id: 'home', href: '#/home', icon: 'home', he: 'בית' },
+  { id: 'home', href: '#/home', icon: 'path', he: 'מסלול' },
   { id: 'map', href: '#/map', icon: 'roots', he: 'מפה' },
   { id: 'practice', href: '#/practice', icon: 'target', he: 'תרגול' },
   { id: 'progress', href: '#/progress', icon: 'chart', he: 'התקדמות' },
 ];
-const TAB_OF = { home: 'home', map: 'map', c: 'map', bridge: 'map', practice: 'practice', check: 'practice', water: 'practice', debate: 'practice', eli10: 'practice', progress: 'progress' };
+const TAB_OF = { home: 'home', path: 'home', water: 'home', map: 'map', c: 'map', bridge: 'map', practice: 'practice', check: 'practice', debate: 'practice', eli10: 'practice', progress: 'progress' };
 
 function Shell({ tab, state, openSheet }) {
   const demoBadge = state.demo && html`<span class="badge badge-demo" title="מראה איך המפה נראית אחרי חודש של למידה"><${Icon} name="clock" />מצב הדגמה</span>`;
@@ -102,12 +104,12 @@ function SettingsSheet({ state, onClose }) {
         <div class="seg">${[['auto', 'אוטומטי'], ['light', 'בהיר'], ['dark', 'כהה']].map(([k, he]) => html`<button aria-pressed=${String(state.mode === k)} onClick=${() => set((s) => { s.mode = k; })}>${he}</button>`)}</div>
       </div>
       <label class="switch panel panel-quiet">
-        <span><strong>מצב הדגמה</strong><br /><span class="muted">איך המפה, הבית וההתקדמות נראים אחרי חודש של למידה. ההתקדמות האמיתית שלך לא משתנה.</span></span>
+        <span><strong>מצב הדגמה</strong><br /><span class="muted">איך המסלול, המפה וההתקדמות נראים אחרי חודש של למידה. ההתקדמות האמיתית שלך לא משתנה.</span></span>
         <input type="checkbox" checked=${state.demo} onChange=${(e) => set((s) => { s.demo = e.target.checked; })} /><span class="track"></span>
       </label>
       <div class="row">
         <a class="btn btn-ghost btn-sm" href="#/welcome" onClick=${onClose}><${Icon} name="heart" />לשנות תחומי עניין</a>
-        <button class="btn btn-quiet btn-sm" onClick=${() => { if (confirm('לאפס את כל ההתקדמות? אי אפשר לבטל.')) { store.reset({ dir: DIR, mode: state.mode, interests: state.interests, onboarded: true }); onClose(); toast('ההתקדמות אופסה'); } }}>איפוס התקדמות</button>
+        <button class="btn btn-quiet btn-sm" onClick=${() => { if (confirm('לאפס את כל ההתקדמות? אי אפשר לבטל.')) { store.reset({ dir: DIR, mode: state.mode, interests: state.interests, onboarded: true, scored: true }); onClose(); toast('ההתקדמות אופסה'); } }}>איפוס התקדמות</button>
       </div>
       ${!store.storageOk() && html`<${ErrorBanner} text="הדפדפן הזה לא שומר נתונים (אולי מצב פרטי). ההתקדמות תישמר רק עד שתסגור את הלשונית." />`}
     </div>
@@ -126,11 +128,14 @@ function SeenSheet({ state, onClose, preset }) {
     .slice(0, q ? 12 : 8);
   const save = () => {
     const before = levelOf(p, pick);
+    // הנקודות על רישום ניתנות פעם ביום לכל מושג (actions.seen)
+    const today = new Date().toDateString();
+    const fresh = !p.journal.some((j) => j.concept === pick && new Date(j.at).toDateString() === today);
     actions.seen(state, pick, note);
     onClose();
     // מי שכבר מזהה ופוגש את המושג בחיים מגיע לדרגה העמוקה: "משתמש"
-    if (before >= 3 && before < 5) celebrate({ title: 'עלית דרגה: משתמש', sub: title(pick), text: 'פגשת את המושג בחיים ורשמת אותו. זו הדרגה העמוקה בסולם: הידע הפך לזיהוי.' });
-    else toast(`נרשם ביומן: ${title(pick)}`);
+    if (before >= 3 && before < 5) celebrate({ title: 'עלית דרגה: משתמש', sub: fresh ? `${title(pick)} · +${POINTS.seen} נקודות` : title(pick), text: 'פגשת את המושג בחיים ורשמת אותו. זו הדרגה העמוקה בסולם: הידע הפך לזיהוי.' });
+    else toast(`נרשם ביומן: ${title(pick)}${fresh ? ` · +${POINTS.seen} נקודות` : ''}`);
   };
   return html`<${Sheet} title="ראיתי את זה היום" sub="איפה פגשת מושג בחיים? כל רישום כזה מקבע את הזיכרון יותר מכל תרגיל." onClose=${onClose}>
     ${!pick ? html`<div class="stack">
@@ -173,10 +178,22 @@ function App() {
       return () => mq.removeEventListener('change', f);
     } catch (e) { return undefined; }
   }, []);
-  const load = () => { setErr(null); loadContent().then(() => setReady(true)).catch((e) => setErr(String(e && e.message ? e.message : e))); };
+  // אחרי הטעינה, ולפני הציור הראשון: התקדמות ישנה מתורגמת לנקודות פעם אחת, כדי שלא תיחשב "עלייה ברמה"
+  const backfill = () => { if (!store.get().scored) store.update((d) => { if (!d.scored) { d.points = (d.points || 0) + pointsFromProgress(d); d.scored = true; d.levelSeen = Math.max(d.levelSeen || 1, levelInfo(d.points).n); } }); };
+  const load = () => { setErr(null); loadContent().then(() => { backfill(); setReady(true); }).catch((e) => setErr(String(e && e.message ? e.message : e))); };
   useEffect(load, []);
   const hash = useHash();
   const route = parse(hash);
+  // עלייה ברמה (D-21): חלון קטן, פעם אחת לכל רמה. הרמה שכבר הוצגה נשמרת (levelSeen), כך שלשונית אחרת
+  // לא מציגה אותו שוב, ומי שיצא מתחנה לפני מסך הסיום רואה אותו כשהוא חוזר. במסך התחנה מסך הסיום מציג את זה.
+  const pp = progressOf(state);
+  const ptsNow = pp.points || 0;
+  const lvNow = levelInfo(ptsNow).n;
+  useEffect(() => {
+    if (!ready || route.name === 'go' || lvNow <= (pp.levelSeen || 1)) return;
+    actions.levelShown(state, lvNow);
+    celebrate({ level: lvNow, title: `עלית לרמה ${lvNow}`, sub: `${ptsNow} נקודות`, text: `כל תחנה במסלול, תשובה נכונה, השקיה ורישום ב"ראיתי את זה" מקדמים אותך. הרמה הבאה מתחילה ב־${levelInfo(ptsNow).next} נקודות.` });
+  });
 
   if (err) return html`<div class="app"><main class="main"><div class="wrap stack"><${ErrorBanner} text=${`לא הצלחתי לטעון את התוכן (${err}).`} onRetry=${load} /></div></main></div>`;
   if (!ready) return html`<${Loading} />`;
@@ -186,7 +203,9 @@ function App() {
   const a = route.args;
   const screens = {
     welcome: () => html`<${Onboarding} ctx=${ctx} />`,
-    home: () => html`<${Home} ctx=${ctx} />`,
+    home: () => html`<${PathScreen} ctx=${ctx} />`,
+    path: () => html`<${PathScreen} ctx=${ctx} />`,
+    go: () => html`<${StationScreen} ctx=${ctx} concept=${a[0]} part=${a[1]} />`,
     map: () => html`<${MapScreen} ctx=${ctx} focus=${a[0]} />`,
     c: () => html`<${ConceptScreen} ctx=${ctx} id=${a[0]} />`,
     check: () => html`<${CheckScreen} ctx=${ctx} id=${a[0]} />`,
@@ -206,12 +225,14 @@ function App() {
     eli10: () => html`<${Eli10} ctx=${ctx} />`,
   };
   const screen = (screens[route.name] || screens.home)();
-  const bare = route.name === 'welcome';
+  // כניסה ראשונה ותחנה במסלול: בלי סרגלים, כדי שלא יהיה על מה ללחוץ חוץ מהצעד עצמו
+  const bare = route.name === 'welcome' || route.name === 'go';
+  const mainCls = route.name === 'go' ? 'main main-sess' : bare ? 'main main-bare' : route.name === 'map' ? 'main main-map' : 'main';
   return html`<div class="app" data-screen=${route.name}>
     <${AtlasDefs} />
     ${!bare && html`<${Shell} tab=${TAB_OF[route.name] || 'home'} state=${state} openSheet=${setSheet} />`}
-    <main class=${bare ? 'main main-bare' : route.name === 'map' ? 'main main-map' : 'main'} id="main">
-      <div class=${route.name === 'map' ? 'screen-fade' : 'wrap screen-enter'} key=${hash}>${screen}</div>
+    <main class=${mainCls} id="main">
+      <div class=${route.name === 'map' ? 'screen-fade' : route.name === 'home' || route.name === 'path' ? 'wrap screen-fade' : 'wrap screen-enter'} key=${hash}>${screen}</div>
     </main>
     ${sheet === 'settings' && html`<${SettingsSheet} state=${state} onClose=${() => setSheet(null)} />`}
     ${(sheet === 'seen' || (sheet && sheet.seen)) && html`<${SeenSheet} state=${state} preset=${sheet.seen} onClose=${() => setSheet(null)} />`}

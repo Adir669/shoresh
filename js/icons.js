@@ -52,6 +52,10 @@ const P = {
   timeline: '<path d="M12 3v18"/><circle cx="12" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="M14 7h5M5 17h5"/>',
   headphones: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3.5" y="14" width="4" height="6.5" rx="1.6"/><rect x="16.5" y="14" width="4" height="6.5" rx="1.6"/>',
   external: '<path d="M14 4h6v6"/><path d="m20 4-8.5 8.5"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  // המסלול (D-21): שלוש תחנות על שביל, מדליה למבחן השלב, וכרטיסים
+  path: '<path d="M7 21.2c0-3.6 10.5-3.2 10.5-7.4 0-4-9.5-3.4-9.5-7.3"/><path d="M8 6.5V2.4l5.2 1.9L8 6.1"/><circle cx="7" cy="21.2" r="1.3" fill="currentColor"/>',
+  medal: '<circle cx="12" cy="9" r="5.6"/><circle cx="12" cy="9" r="2.3"/><path d="M8.7 13.5 7.2 20.6l4.8-2.4 4.8 2.4-1.5-7.1"/>',
+  cards: '<rect x="3.5" y="7" width="11" height="13.5" rx="1.6"/><path d="M8.5 7V5.1A1.6 1.6 0 0 1 10.1 3.5h8.3A1.6 1.6 0 0 1 20 5.1v11.3a1.6 1.6 0 0 1-1.6 1.6h-3.9"/><path d="M6.5 11.5h5M6.5 14.5h5"/>',
 };
 
 export function Icon({ name, cls = '', title }) {

@@ -122,9 +122,60 @@ function ExplainEx({ ex, onDone }) {
   </div>`;
 }
 
+// התאמה (D-21): שם המושג מול התיאור שלו במשפט אחד. נבנית בזמן ריצה מהתוכן המאומת, ולכן
+// לא נשמרת כתרגיל ולא עוברת את SCHEMA. בוחרים שם ואז את התיאור; טעות רק מהבהבת ונספרת.
+// onDone(ok, { miss, firstTry }): ok כשהיו לכל היותר טעות אחת.
+export function MatchEx({ pairs, seed = 'm', onDone }) {
+  const [names] = useState(() => mix(pairs.map((x) => x.id), `${seed}:n`));
+  // התיאורים לא באותו סדר כמו השמות, אחרת ההתאמה נפתרת מעצמה
+  const [texts] = useState(() => { const t = mix(pairs.map((x) => x.id), `${seed}:t`); return t.length > 1 && t.every((x, i) => x === names[i]) ? [...t.slice(1), t[0]] : t; });
+  const [sel, setSel] = useState(null);
+  const [got, setGot] = useState([]);
+  const [miss, setMiss] = useState(0);
+  const [missed, setMissed] = useState([]); // מזהים שהייתה בהם טעות, לניקוד "בפעם הראשונה"
+  const [bad, setBad] = useState(null);
+  const [say, setSay] = useState(''); // הודעה לקורא מסך: מה קרה בבחירה האחרונה
+  const by = Object.fromEntries(pairs.map((x) => [x.id, x]));
+  const finished = got.length === pairs.length;
+  const pick = (tid) => {
+    if (!sel || got.includes(tid) || finished) return;
+    if (sel === tid) {
+      const next = [...got, tid];
+      setGot(next); setSel(null); setSay(`נכון: ${by[tid].name}`);
+      if (next.length === pairs.length && onDone) onDone(miss <= 1, { miss, firstTry: pairs.length - missed.length });
+    } else {
+      setMiss(miss + 1); setBad(tid); setSay(`לא מתאים ל"${by[sel].name}". נסו תיאור אחר.`);
+      if (!missed.includes(sel)) setMissed([...missed, sel]);
+      setTimeout(() => setBad(null), 650);
+    }
+  };
+  return html`<div class="stack match">
+    <p class="ex-prompt">איזה תיאור שייך לאיזה מושג?</p>
+    <div class="match-names" role="group" aria-label="שמות המושגים">${names.map((id) => html`<button class="match-name" data-id=${id} aria-pressed=${String(sel === id)} disabled=${got.includes(id)} onClick=${() => setSel(sel === id ? null : id)}>${by[id].name}</button>`)}</div>
+    <div class="match-texts">${texts.map((id) => {
+      const ok = got.includes(id);
+      return html`<button class=${`match-text${ok ? ' is-ok' : ''}${bad === id ? ' is-bad' : ''}`} data-id=${id} disabled=${ok || finished} onClick=${() => pick(id)}>
+        ${ok && html`<span class="match-tag"><${Icon} name="check" />${by[id].name}</span>`}
+        <span>${by[id].text}</span>
+      </button>`;
+    })}</div>
+    <p class="sr-only" aria-live="polite">${say}</p>
+    ${finished ? html`<${Feedback} ok=${miss <= 1} title=${miss === 0 ? 'הכול במקום, בלי טעות אחת.' : miss === 1 ? 'הכול במקום, עם טעות אחת בדרך.' : `הכול במקום, אחרי ${miss} טעויות. שווה לעבור שוב על הכרטיסים.`} />`
+      : html`<p class="faint match-hint">${sel ? `עכשיו בחרו את התיאור של "${by[sel].name}".` : 'בחרו שם, ואז את התיאור שמתאים לו.'}</p>`}
+  </div>`;
+}
+// ערבוב יציב לפי מחרוזת, כדי שאותו סבב ייראה אותו דבר בכל טעינה (וגם בצילומי המסך)
+function mix(arr, seed) {
+  let h = 2166136261;
+  for (const ch of seed + arr.join('|')) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+  const out = arr.slice();
+  for (let i = out.length - 1; i > 0; i--) { h = Math.imul(h ^ (h >>> 13), 1274126177); const j = Math.abs(h) % (i + 1); [out[i], out[j]] = [out[j], out[i]]; }
+  return out;
+}
+
 export function ExerciseView({ ex, onDone }) {
   const C = { case: CaseEx, hunt: HuntEx, mcq: McqEx, truefalse: TrueFalseEx, duel: DuelEx, firstfall: FirstFallEx, explain: ExplainEx }[ex.type];
-  return C ? html`<div class="exercise" data-type=${ex.type}>
+  return C ? html`<div class="exercise" data-type=${ex.type} data-id=${ex.id}>
     <span class="ex-type">${TYPE_NAME[ex.type]}</span>
     <${C} ex=${ex} onDone=${onDone} key=${ex.id} />
   </div>` : null;

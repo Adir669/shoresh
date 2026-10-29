@@ -47,8 +47,8 @@ function Layer({ id, n, name, children, cls = '' }) {
   </section>`;
 }
 
-// משחק המטוסים של ואלד (בתוך הטיית השורדים)
-function Planes({ it, sources }) {
+// משחק המטוסים של ואלד (בתוך הטיית השורדים). מיוצא גם לפתיחה במסלול (station.js)
+export function Planes({ it, sources }) {
   const [pick, setPick] = useState(null);
   const zones = it.zones || [];
   const names = Object.fromEntries(zones.map((z) => [z.id, z.name]));

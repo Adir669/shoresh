@@ -19,10 +19,16 @@ export function Ill({ name, size = 'md' }) {
 }
 
 // סמל המושג (D-20): מטאפורה שעברה את שער האימות. מושג בלי סמל מאומת לא מציג כלום.
-export function Emblem({ id, size = 'md' }) {
+// locked: צללית של חותמת שעוד לא נאספה לאוסף (D-21)
+export function Emblem({ id, size = 'md', locked = false }) {
   const e = emblemOf(id);
   if (!e) return null;
-  return html`<span class=${`ill emblem ill-${size}`} title=${e.metaphor || ''}><img src=${e.src} alt=${e.alt} width="480" height="480" loading="lazy" decoding="async" /></span>`;
+  return html`<span class=${`ill emblem ill-${size}${locked ? ' is-locked' : ''}`} title=${locked ? 'חותמת שעוד לא נאספה' : e.metaphor || ''}><img src=${e.src} alt=${locked ? '' : e.alt} width="480" height="480" loading="lazy" decoding="async" /></span>`;
+}
+
+// תג רמה (D-21): מספר בתוך חותמת מרובעת, כמו סימון גובה במפה
+export function LevelBadge({ n, size = 'md' }) {
+  return html`<span class=${`lv-badge lv-${size}`} role="img" aria-label=${`רמה ${n}`}><span class="num">${n}</span></span>`;
 }
 
 export function CType({ type }) {
@@ -52,9 +58,9 @@ export function Ladder({ level = 0, fieldId, showNames = true }) {
   </div>`;
 }
 
-export function Bar({ value, max, fieldId }) {
+export function Bar({ value, max, fieldId, label }) {
   const p = max ? Math.min(1, value / max) : 0;
-  return html`<div class="bar" data-field=${fieldId} role="progressbar" aria-valuenow=${value} aria-valuemax=${max}><i style=${`--p:${p}`}></i></div>`;
+  return html`<div class="bar" data-field=${fieldId} role="progressbar" aria-label=${label} aria-valuemin="0" aria-valuenow=${value} aria-valuemax=${max}><i style=${`--p:${p}`}></i></div>`;
 }
 
 export function Sheet({ title, sub, onClose, children }) {
@@ -89,17 +95,20 @@ export function ToastHost() {
   return m ? html`<div class="toast" role="status" aria-live="polite"><${Icon} name="sprout" />${m}</div>` : null;
 }
 
-// רגע חוויה (D-20): חלון קטן עם איור כשעולים דרגה. השלב הבא מופיע בו כקישור.
+// רגע חוויה (D-20): חלון קטן עם איור כשעולים דרגה או רמה. השלב הבא מופיע בו כקישור.
+// כמה רגעים באותה פעולה (למשל דרגה ורמה) מוצגים בתור, אחד אחרי השני, ולא דורסים זה את זה.
 let pushMoment = null;
+let momentSeq = 0;
 export function celebrate(m) { if (pushMoment) pushMoment(m); }
 export function MomentHost() {
-  const [m, setM] = useState(null);
-  pushMoment = setM;
+  const [q, setQ] = useState([]);
+  pushMoment = (m) => setQ((x) => [...x, { ...m, k: ++momentSeq }]);
+  const m = q[0];
   if (!m) return null;
-  const close = () => setM(null);
-  return html`<${Sheet} title=${m.title} sub=${m.sub} onClose=${close}>
+  const close = () => setQ((x) => x.slice(1));
+  return html`<${Sheet} key=${m.k} title=${m.title} sub=${m.sub} onClose=${close}>
     <div class="moment">
-      <${Ill} name=${m.ill || 'mo-depth'} size="lg" />
+      ${m.level ? html`<${LevelBadge} n=${m.level} size="xl" />` : html`<${Ill} name=${m.ill || 'mo-depth'} size="lg" />`}
       <div class="moment-copy">
         ${m.text && html`<p>${m.text}</p>`}
         <div class="row">

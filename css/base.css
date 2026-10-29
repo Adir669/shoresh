@@ -69,6 +69,8 @@ button { cursor: pointer; }
 .en { direction: ltr; unicode-bidi: isolate; display: inline-block; max-width: 100%; overflow-wrap: anywhere; font-family: var(--font-body); }
 .ltr { direction: ltr; unicode-bidi: isolate; }
 .num { font-variant-numeric: tabular-nums; }
+/* טקסט לקורא מסך בלבד */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* פריסה */
 .app { position: relative; z-index: 1; min-height: 100dvh; }
@@ -102,9 +104,11 @@ button { cursor: pointer; }
 /* כניסה מדורגת של רשימות */
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .reveal > * { animation: rise var(--dur-3) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 55ms); }
-.screen-enter { animation: rise var(--dur-3) var(--ease-out) both; }
-/* במפה: כניסה בשקיפות בלבד. transform על אב של position:fixed הופך אותו לעוגן, והמפה מתכווצת לגובה 0 */
-.screen-fade { animation: fade-in var(--dur-2) var(--ease-out) both; }
+.screen-enter { animation: rise var(--dur-3) var(--ease-out) backwards; }
+/* במפה ובמסלול: כניסה בשקיפות בלבד. transform על אב של position:fixed הופך אותו לעוגן, והמפה מתכווצת לגובה 0.
+   backwards ולא both: אנימציה שנשארת במצב הסופי עדיין יוצרת הקשר ערימה (ב־transform גם עוגן), ואז גיליון שנפתח
+   בתוך המסך נלכד מתחת לסרגל הלשוניות ולא מכסה את שולי המסך. עם backwards היא פשוט נגמרת. */
+.screen-fade { animation: fade-in var(--dur-2) var(--ease-out) backwards; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {

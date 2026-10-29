@@ -1,10 +1,31 @@
-// מסך 7: התקדמות — טביעת האצבע של השורשים, סולם העומק, התקדמות לכל תחום, ויומן "ראיתי את זה".
+// מסך 7: התקדמות — רמה ונקודות, טביעת האצבע של השורשים, סולם העומק, אוסף החותמות (D-21),
+// התקדמות לכל תחום, ויומן "ראיתי את זה".
 import { html, useMemo } from '../vendor/standalone.module.js';
-import { data, node, title, levelOf, LEVELS } from '../data.js';
+import { data, node, title, levelOf, LEVELS, levelInfo, POINTS } from '../data.js';
+import { stampGroups, hasStamp, stampStats } from '../course.js';
 import { layout, smooth } from '../maplayout.js';
 import { Icon, FieldGlyph } from '../icons.js';
-import { FieldChip, Bar, Empty, fmtDate } from '../ui.js';
+import { FieldChip, Bar, Empty, fmtDate, LevelBadge, Emblem } from '../ui.js';
 import { Strata } from '../atlas.js';
+
+// אוסף החותמות לפי סדר המסלול: כרטיס נאסף ב"מבין", ומושג מלא במבחן השלב שלו
+function Stamps({ p }) {
+  const ss = stampStats(p);
+  return html`<section class="stamps" id="stamps">
+    <div class="section-head"><h2>אוסף החותמות</h2><span class="faint num">${ss.have} מתוך ${ss.total}</span></div>
+    <p class="muted stamps-note">כרטיס נכנס לאוסף כשמבינים אותו. הסמל של מושג מלא נחשף רק כשעוברים את מבחן השלב שלו במסלול.</p>
+    ${stampGroups().map((g) => html`<div class="stamp-group">
+      <span class="label">שלב ${g.stage + 1} · ${title(g.concept)}</span>
+      <div class="stamp-grid">${g.ids.map((id) => {
+        const got = hasStamp(p, id);
+        return html`<a class=${`stamp-cell${got ? ' is-got' : ''}${id === g.concept ? ' is-main' : ''}`} href=${`#/c/${id}`} aria-label=${`${title(id)}: ${got ? 'נאספה' : 'עוד לא נאספה'}`}>
+          <${Emblem} id=${id} size="sm" locked=${!got} />
+          <span class="stamp-name">${title(id)}</span>
+        </a>`;
+      })}</div>
+    </div>`)}
+  </section>`;
+}
 
 // טביעת האצבע כדיסק דגימה: השורשים שלך בתוך עיגול, על רקע שכבות הקרקע, עם שנתות מעלות מסביב
 function Fingerprint({ p }) {
@@ -78,8 +99,18 @@ export function ProgressScreen({ ctx }) {
   const dist = LEVELS.map((l) => ids.filter((id) => levelOf(p, id) === l.n).length);
   const maxDist = Math.max(1, ...dist);
   const groups = D.fields.groups;
+  const lv = levelInfo(p.points || 0);
   return html`<div class="progress-screen">
     <div class="screen-title"><span class="kicker">התקדמות</span><h1>מה כבר צמח</h1><p>אין שתי מערכות שורשים זהות. זו טביעת האצבע של הסקרנות שלך.</p></div>
+    <section class="panel level-panel">
+      <${LevelBadge} n=${lv.n} size="lg" />
+      <div class="lm-body">
+        <strong>רמה ${lv.n}</strong>
+        <${Bar} value=${lv.into} max=${lv.span} label=${`התקדמות לרמה ${lv.n + 1}`} />
+        <span class="faint num">${p.points || 0} נקודות · עוד ${lv.span - lv.into} לרמה ${lv.n + 1}</span>
+      </div>
+      <p class="faint level-note">נקודות מגיעות מכל תחנה במסלול, מתשובות נכונות ומהשקיה. רישום ב"ראיתי את זה" שווה ${POINTS.seen}, כמו מבחן שלב שלם. סולם העומק של כל מושג נשאר המדד לשליטה בו.</p>
+    </section>
     <div class="progress-grid">
       <section class="panel fp-panel">
         <${Fingerprint} p=${p} />
@@ -96,6 +127,8 @@ export function ProgressScreen({ ctx }) {
       </section>
     </div>
 
+    <${Stamps} p=${p} />
+
     <section class="fields-progress">
       <div class="section-head"><h2>לפי תחום</h2></div>
       ${groups.map((g) => html`<div class="fp-group">
@@ -104,7 +137,7 @@ export function ProgressScreen({ ctx }) {
           const n = ids.filter((id) => node(id).field === f.id && levelOf(p, id) > 0).length;
           return html`<div class="field-row" data-field=${f.id}>
             <span class="fr-name"><${FieldGlyph} id=${f.id} />${f.short}</span>
-            <${Bar} value=${n} max=${f.planned} fieldId=${f.id} />
+            <${Bar} value=${n} max=${f.planned} fieldId=${f.id} label=${f.he} />
             <span class="fr-count num">${n} מתוך ${f.planned}</span>
           </div>`;
         })}</div>

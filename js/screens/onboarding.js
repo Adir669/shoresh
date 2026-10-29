@@ -1,7 +1,8 @@
-// מסך 1: כניסה ראשונה — ברוכים הבאים, תחומי עניין, ונקודת התחלה.
+// מסך 1: כניסה ראשונה — ברוכים הבאים, תחומי עניין, והמסלול (D-21).
 import { html, useState } from '../vendor/standalone.module.js';
 import { store } from '../store.js';
-import { data, seeds, node, fullOf, cardOf, interestFields } from '../data.js';
+import { data, node, fullOf, title } from '../data.js';
+import { stages } from '../course.js';
 import { Icon, BrandMark } from '../icons.js';
 import { FieldChip, Ill, Emblem } from '../ui.js';
 import { Compass } from '../atlas.js';
@@ -37,8 +38,8 @@ export function Onboarding({ ctx }) {
         <h1 style="--i:1">כל מושג שתלמד יצמיח שורש.</h1>
         <p class="lead" style="--i:2">הטיות חשיבה, כשלים לוגיים, תורת המשחקים, פילוסופיה, היסטוריה. לומדים מושג אחד לעומק, עד שמזהים אותו ביום־יום, ומשם השורש מתפצל למושגים שקשורים אליו.</p>
         <ul class="welcome-points" style="--i:3">
-          <li><${Icon} name="drop" /><span><strong>השקיה קצרה</strong> כשיש חמש דקות: חוזרים בדיוק על מה שמתחיל להישכח.</span></li>
-          <li><${Icon} name="sprout" /><span><strong>צמיחה ארוכה</strong> כשיש זמן: מושג חדש בעומק מלא, עם מקרים אמיתיים ותרגול.</span></li>
+          <li><${Icon} name="path" /><span><strong>מסלול קבוע</strong> של תחנות קצרות: כל פעם צעד אחד, ותמיד ברור מה הבא.</span></li>
+          <li><${Icon} name="drop" /><span><strong>השקיה קצרה</strong> כשמגיע הזמן: חוזרים בדיוק על מה שמתחיל להישכח.</span></li>
           <li><${Icon} name="shield" /><span><strong>הכול נבדק</strong>: כל טענה עברה בודק עובדות שלא כתב אותה.</span></li>
         </ul>
         <div class="row" style="--i:4"><button class="btn" onClick=${() => setStep(1)}>בוא נתחיל<${Icon} name="next" /></button></div>
@@ -52,7 +53,7 @@ export function Onboarding({ ctx }) {
       <div class="onb-head">
         <span class="kicker">שלב 1 מתוך 2</span>
         <h1>מה מסקרן אותך?</h1>
-        <p class="lead">בחר כמה תחומים. הם יקבלו עדיפות בהצעות, אבל לא בלעדיות: בערך אחת מכל שלוש הצעות תהיה גילוי מחוץ להם. התחום הראשון שתבחר קובע מאיזה עולם תגיע הדוגמה הראשונה בכל מושג.</p>
+        <p class="lead">בחר כמה תחומים. התחום הראשון שתבחר קובע מאיזה עולם תגיע הדוגמה הראשונה בכל מושג, והמפה תסמן לך נקודות התחלה לפי מה שבחרת.</p>
       </div>
       <div class="interest-grid reveal">
         ${D.interests.interests.map((it, i) => {
@@ -71,26 +72,35 @@ export function Onboarding({ ctx }) {
     </section>`;
   }
 
-  const seedIds = seeds(picked);
-  const wanted = interestFields(picked);
+  // שלב 2: המסלול (D-21). שמונה שלבים קבועים, והתחנה הראשונה מחכה. הסמלים מוצגים כצלליות:
+  // הם נכנסים לאוסף רק כשעוברים את מבחן השלב. מי שכבר בדרך (שינה תחומי עניין) ממשיך מאיפה שעצר.
+  const st = stages();
+  const first = st[0];
   const finish = (go) => { store.update((s) => { s.interests = picked; s.onboarded = true; }); location.hash = go; };
   return html`<section class="onb">
     <div class="onb-head">
       <span class="kicker">שלב 2 מתוך 2</span>
-      <h1>מאיפה לצמוח?</h1>
-      <p class="lead">שלוש נקודות התחלה לפי מה שבחרת. כל אחת מהן היא מושג מלא, עם סיפור פתיחה, מקרים אמיתיים ותרגול, ומכל אחת השורש יתפצל הלאה.</p>
+      <h1>המסלול שלך</h1>
+      <p class="lead">${st.length} שלבים, שלב לכל מושג מלא. כל שלב בנוי מתחנות קצרות של כמה דקות: פתיחה, תרגול, בדיקת זיהוי, כרטיסים, דו־קרב ומבחן. כל תחנה מקנה נקודות, ובסוף כל שלב הסמל של המושג נכנס לאוסף שלך.</p>
     </div>
-    <div class="seed-list reveal">
-      ${seedIds.map((id, i) => {
-        const n = node(id); const c = fullOf(id) || cardOf(id);
-        return html`<button class="tile tile-field seed" data-field=${n.field} style=${`--i:${i}`} onClick=${() => finish(`#/c/${id}`)}>
-          <div class="row-between"><${FieldChip} id=${n.field} long=${true} />${i === 0 && html`<span class="badge badge-gold"><${Icon} name="star" />מומלץ</span>`}</div>
-          <div class="seed-main"><div class="seed-copy"><h2>${n.he}</h2><p class="muted">${c ? c.oneLiner : 'בכתיבה ובבדיקה'}</p></div><${Emblem} id=${id} size="md" /></div>
-          <span class="seed-go">להתחיל כאן<${Icon} name="next" /></span>
-          ${wanted.has(n.field) ? null : html`<span class="faint seed-note">גילוי: מחוץ לתחומים שבחרת</span>`}
-        </button>`;
+    <ol class="onb-path reveal">
+      ${st.map((s, i) => {
+        const n = node(s.concept); const c = fullOf(s.concept);
+        return html`<li class=${`onb-stage${i === 0 ? ' is-first' : ''}`} data-field=${n.field} style=${`--i:${i}`}>
+          <span class="onb-n num">${i + 1}</span>
+          <${Emblem} id=${s.concept} size="sm" locked=${true} />
+          <span class="onb-stage-text"><strong>${n.he}</strong>${i === 0 && c && html`<span class="muted">${c.oneLiner}</span>`}</span>
+          <${FieldChip} id=${n.field} />
+        </li>`;
       })}
+    </ol>
+    <div class="onb-foot">
+      <button class="btn btn-quiet" onClick=${() => setStep(1)}><${Icon} name="back" />חזרה</button>
+      <span class="row">
+        ${!state.onboarded && html`<button class="btn btn-ghost onb-look" onClick=${() => finish('#/home')}>להסתכל על המסלול</button>`}
+        ${state.onboarded ? html`<button class="btn onb-start" onClick=${() => finish('#/home')}>להמשיך במסלול<${Icon} name="next" /></button>`
+          : first && html`<button class="btn onb-start" onClick=${() => finish(`#/go/${first.concept}/lesson`)}>להתחיל: ${title(first.concept)}<${Icon} name="next" /></button>`}
+      </span>
     </div>
-    <div class="onb-foot"><button class="btn btn-quiet" onClick=${() => setStep(1)}><${Icon} name="back" />חזרה</button><button class="btn btn-ghost" onClick=${() => finish('#/home')}>לבית<${Icon} name="next" /></button></div>
   </section>`;
 }

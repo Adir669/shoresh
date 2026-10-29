@@ -11,7 +11,11 @@ export const DEFAULTS = () => ({
   demo: false,            // מצב הדגמה: איך המפה נראית אחרי חודש
   concepts: {},           // id → { level, stage, due, seenAt, learnedAt, checks: {} }
   journal: [],            // { id, concept, at, note }
-  ex: {},                 // exerciseId → { ok, at }
+  ex: {},                 // exerciseId → { ok, at, won }
+  points: 0,              // נקודות (D-21). הרמה מחושבת מהן (levelInfo ב־data.js)
+  scored: false,          // האם ההתקדמות שנצברה לפני הנקודות כבר תורגמה לנקודות (פעם אחת, pointsFromProgress)
+  levelSeen: 1,           // הרמה האחרונה שחלון "עלית לרמה" כבר הציג
+  path: {},               // תחנות במסלול: '<concept>/<key>' → { passed, at, n, best, last }. key: lesson | practice | check | cards-<מזהה הכרטיס הראשון> | duel | test
   updatedAt: 0,
 });
 
