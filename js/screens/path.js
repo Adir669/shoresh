@@ -3,7 +3,7 @@
 // הקואורדינטות של השורש ושל התחנות פיזיות (כמו ב־SVG), באחוזים מרוחב המסלול, ולכן left ולא תכונות לוגיות.
 import { html, useState, useEffect, useRef } from '../vendor/standalone.module.js';
 import { node, title, levelInfo, POINTS } from '../data.js';
-import { stations, stages, nextAction, stationName, stationSub, stationShort, minutesOf, hrefOf, KINDS, hasStamp, stampStats } from '../course.js';
+import { stations, stages, nextAction, stationName, stationDesc, stationSub, stationShort, minutesOf, hrefOf, KINDS, hasStamp, stampStats } from '../course.js';
 import { Icon } from '../icons.js';
 import { FieldChip, Emblem, LevelBadge, Bar, Sheet, Empty, fmtToday } from '../ui.js';
 import { Sprout } from '../atlas.js';
@@ -125,7 +125,7 @@ function StationSheet({ s, cur, p, onClose }) {
   const go = s.state === 'current' || s.state === 'done';
   return html`<${Sheet} title=${stationName(s)} sub=${`שלב ${s.stage + 1} · ${title(s.concept)}`} onClose=${onClose}>
     <div class="stack station-sheet">
-      <div class="st-lead"><span class="st-icon" data-state=${s.state}><${Icon} name=${k.icon} /></span><p>${k.desc}</p></div>
+      <div class="st-lead"><span class="st-icon" data-state=${s.state}><${Icon} name=${k.icon} /></span><p>${stationDesc(s)}</p></div>
       ${s.kind === 'cards' && html`<ul class="st-cards">${s.cards.filter((x) => node(x)).map((x) => html`<li><${Emblem} id=${x} size="sm" locked=${!hasStamp(p, x)} /><span>${title(x)}</span></li>`)}</ul>`}
       ${s.kind === 'test' && html`<div class="st-cards"><${Emblem} id=${s.concept} size="sm" locked=${!hasStamp(p, s.concept)} /><span>${hasStamp(p, s.concept) ? 'החותמת כבר באוסף שלך.' : `מי שעובר מקבל לאוסף את החותמת של ${title(s.concept)}.`}</span></div>`}
       <p class="faint num">כ־${minutesOf(s)} דקות · ${STATE_HE[s.state]}</p>

@@ -111,6 +111,8 @@
 .nm-open .nm-label, .nm-locked .nm-label { fill: var(--ink-2); }
 .map-svg[data-zoom="far"] .nm:not(.nm-full) .nm-label { display: none; }
 .nm:focus-visible .nm-dot { stroke: var(--accent); stroke-width: 3.5; }
+/* טבעת פוקוס למקלדת: הקו של נקודה קטנה לבד כמעט לא נראה. משתמשים בעיגול הלחיצה, שגדול מהנקודה ב־10 */
+.nm:focus-visible .nm-hit { stroke: var(--accent); stroke-width: 2.5; }
 .map-toolbar { position: absolute; inset-block-start: var(--s-3); inset-inline: var(--s-3); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); pointer-events: none; }
 .map-toolbar > * { pointer-events: auto; }
 .map-title { display: grid; gap: 2px; padding: var(--s-2) var(--s-4); border-radius: var(--r-sm); background: color-mix(in oklab, var(--surface) 92%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px color-mix(in oklab, var(--surface) 92%, transparent), inset 0 0 0 4px var(--line); }
@@ -625,7 +627,8 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .path-end { display: grid; justify-items: center; gap: var(--s-2); text-align: center; padding: var(--s-7) var(--s-5) var(--s-8); background: color-mix(in oklab, var(--st-3) 78%, var(--root-soft)); border-block-start: 3px double var(--line-strong); }
 .path-end > svg { width: 34px; height: 34px; color: var(--gold); }
 .path-end strong { font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-xl); }
-.path-end .muted { max-width: 46ch; font-size: var(--fs-sm); }
+.path-end .muted { max-width: 46ch; font-size: var(--fs-sm); color: var(--ink); } /* על שכבת הקרקע הכהה ink-2 יצא 4.1:1 והקישור 2.8:1 */
+.path-end a { color: inherit; font-weight: var(--fw-strong); }
 
 /* הצעד הבא: כרטיס בצד במחשב, ופס דביק מעל הלשוניות בטלפון */
 .next-card {
@@ -762,3 +765,19 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .stamp-cell.is-got { color: var(--ink); border-style: solid; background: var(--surface); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
 .stamp-cell.is-main.is-got { border-color: var(--gold); }
 .stamp-name { font-size: var(--fs-xs); font-weight: var(--fw-strong); line-height: 1.3; }
+
+/* "נקרא גם" (29.10): הכינויים של המושג (aka), כדי שמי שלמד שם אחד יזהה גם את השני בתרגילים */
+.concept-aka { display: block; font-size: var(--fs-sm); margin-block-start: var(--s-1); }
+.sess-aka { margin: 0; font-size: var(--fs-sm); }
+
+/* דוגמאות של כרטיס (D-23): הדוגמה הבאה נוספת מתחת לקודמות */
+.card-examples { display: grid; gap: var(--s-3); justify-items: start; }
+.examples-list { display: grid; gap: var(--s-3); inline-size: 100%; }
+.example-more { animation: rise var(--dur-3) var(--ease-out) backwards; }
+.example-title { display: block; font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-md); line-height: var(--lh-snug); margin-block: var(--s-1); }
+.example-src { margin: 0; font-size: var(--fs-xs); }
+.example-src a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+.more-ex .num { margin-inline-start: var(--s-1); }
+.more-ex-done { margin: 0; font-size: var(--fs-sm); }
+/* בתוך תיבת דוגמה (רקע surface-2) הטקסט הדהוי בגופן קטן נמדד 4.42:1 בבהיר. כהה יותר כדי לעבור 4.5:1 (בדיקת Hallmark, 30.10) */
+.example .faint, .example .example-src { color: var(--ink-2); }

@@ -3,6 +3,7 @@ import { html, useState, useMemo } from '../vendor/standalone.module.js';
 import { fullOf, title } from '../data.js';
 import { Icon } from '../icons.js';
 import { Back, Feedback, Paras } from '../ui.js';
+import { T } from '../glossary.js';
 
 const C = 'C', D = 'D';
 const ROUNDS = 10;
@@ -57,7 +58,7 @@ export function PDSim() {
 
   return html`<div class="pdsim read">
     <${Back} href="#/practice" label="לתרגול" />
-    <div class="screen-title"><span class="kicker">סימולציה</span><h1>דילמת האסיר</h1><p>${it ? it.intro : 'שני שחקנים בוחרים בו־זמנית: לשתף פעולה או לבגוד. כל אחד מעדיף לבגוד, אבל אם שניהם בוגדים, שניהם מפסידים.'}</p></div>
+    <div class="screen-title"><span class="kicker">סימולציה</span><h1>דילמת האסיר</h1><p>${it ? html`<${T} text=${it.intro} />` : 'שני שחקנים בוחרים בו־זמנית: לשתף פעולה או לבגוד. כל אחד מעדיף לבגוד, אבל אם שניהם בוגדים, שניהם מפסידים.'}</p></div>
     ${c && c.draft && html`<span class="badge badge-gold">טיוטה שעוד לא נבדקה</span>`}
 
     <div class="matrix" role="table" aria-label="טבלת התשלומים: הנקודות שלך, הנקודות של היריב">
@@ -98,7 +99,7 @@ export function PDSim() {
       <h2>טורניר: כל אסטרטגיה מול כל אסטרטגיה, 200 סיבובים</h2>
       <div class="bars">${tour.map((t, k) => html`<div class="bar-row"><span class="bar-name">${name(t.id)}</span><div class="bar"><i style=${`--p:${(t.score / max).toFixed(3)}`}></i></div><span class="num bar-val">${t.score}</span></div>`)}</div>
       <p class="faint">החישוב רץ כאן בדפדפן, על שש האסטרטגיות האלה בלבד.</p>
-      ${it ? html`<div class="panel panel-quiet stack"><${Paras} text=${it.axelrod} /><p><strong>${it.lesson}</strong></p></div>` : html`<p class="muted">ההסבר ההיסטורי על הטורנירים של אקסלרוד יופיע כאן אחרי בדיקת העובדות.</p>`}
+      ${it ? html`<div class="panel panel-quiet stack"><${Paras} text=${it.axelrod} /><p><strong><${T} text=${it.lesson} /></strong></p></div>` : html`<p class="muted">ההסבר ההיסטורי על הטורנירים של אקסלרוד יופיע כאן אחרי בדיקת העובדות.</p>`}
       <a class="btn btn-ghost" href="#/c/prisoners-dilemma">למושג המלא: ${title('prisoners-dilemma')}</a>
     </section>`}
   </div>`;

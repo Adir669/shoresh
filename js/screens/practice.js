@@ -7,6 +7,8 @@ import { FieldChip, Back, Empty, Feedback, toast, fmtRel, Emblem, Ill } from '..
 // כמה נקודות נצברו מאז תחילת הסבב (D-21)
 const Earned = ({ n }) => (n > 0 ? html`<span class="result-badge"><${Icon} name="star" /><strong class="num">+${n} נקודות</strong></span>` : null);
 import { ExerciseView, FirstFallEx, TYPE_NAME } from '../exercises.js';
+import { T } from '../glossary.js';
+import { pools } from '../course.js';
 
 // לכל סוג תרגול איור משלו (Higgsfield, בסגנון האטלס): app/img/atlas/ill-<id>.webp
 const KINDS = [
@@ -97,14 +99,13 @@ export function FirstFall({ ctx }) {
   </div>`;
 }
 
-// השקיה: שאלה מהירה לכל מושג שהגיע זמנו
+// השקיה: שאלה מהירה לכל מושג שהגיע זמנו. רק מתוך מה שהוגן מיד אחרי הפתיחה (התרגול הראשון ובדיקת הזיהוי),
+// כדי שההשקיה לא תשאל על מה שהמסלול לא לימד (אדיר, 29.10). קודם נכון/לא נכון, אחר כך שאלה, ואחר כך תיק
 function quickFor(id) {
-  const c = fullOf(id);
-  if (c) {
-    const tf = c.exercises.find((e) => e.type === 'truefalse');
-    const cs = c.exercises.find((e) => e.type === 'case');
-    return tf || cs || null;
-  }
+  if (!fullOf(id)) return null;
+  const pl = pools(id);
+  const fair = pl ? [...pl.practice, ...pl.check] : [];
+  for (const type of ['truefalse', 'mcq', 'case', 'hunt']) { const e = fair.find((x) => x.type === type); if (e) return e; }
   return null;
 }
 
@@ -116,7 +117,7 @@ function RecallCard({ id, onDone }) {
     <h2>${title(id)}</h2>
     <p class="muted">מה המושג אומר, ואיפה הוא מופיע ביום־יום?</p>
     ${!shown ? html`<button class="btn btn-ghost" onClick=${() => setShown(true)}>להציג</button>` : html`<div class="stack">
-      <div class="reveal-box"><p>${c ? c.oneLiner : ''}</p></div>
+      <div class="reveal-box"><p><${T} text=${c ? c.oneLiner : ''} /></p></div>
       <div class="row"><button class="btn" onClick=${() => onDone(true)}><${Icon} name="check" />זכרתי</button><button class="btn btn-ghost" onClick=${() => onDone(false)}>לא ממש</button></div>
     </div>`}
   </div>`;

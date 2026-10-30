@@ -54,11 +54,12 @@
 :root[data-mode="light"] {
   color-scheme: light;
   --bg: #EFE6D6; --bg-deep: #E4D8C2; --surface: #F8F2E7; --surface-2: #ECE2CF;
-  --ink: #2B2621; --ink-2: #5B5047; --ink-3: #786B5D;
+  /* ink-3, accent ו־gold הוכהו ב־30.10 כדי לעבור 4.5:1 גם על --bg-deep (הסרגל) ועל --gold-soft. קודם: #786B5D, #A9532F, #946B1D */
+  --ink: #2B2621; --ink-2: #5B5047; --ink-3: #685D51;
   --line: #D9CCB4; --line-strong: #BCAA8C;
-  --accent: #A9532F; --accent-ink: #FFF8F0; --accent-soft: #F2DCCB;
+  --accent: #964A2A; --accent-ink: #FFF8F0; --accent-soft: #F2DCCB;
   --moss: #586A3A; --moss-ink: #F8F4E8; --moss-soft: #E2E6CF;
-  --gold: #946B1D; --gold-soft: #F1E2BF;
+  --gold: #7B5918; --gold-soft: #F1E2BF;
   --ok: #4E6B35; --ok-soft: #E1E8D2; --bad: #A23D29; --bad-soft: #F3DDD3;
   --shadow-rgb: 74 56 34;
   --fl: 0.52; --fc: 0.07;

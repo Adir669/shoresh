@@ -6,6 +6,7 @@ import { data, node, field, title, fullOf, cardOf, seeds, nodeState, levelOf, ca
 import { layout, smooth, arc, ORDER } from '../maplayout.js';
 import { Icon, ConnGlyph } from '../icons.js';
 import { Sheet, FieldChip, CType, Ladder, Emblem } from '../ui.js';
+import { T } from '../glossary.js';
 import { Strata, Sprout, Compass, ScaleBar } from '../atlas.js';
 
 // חותמת ב־SVG: מודדים את הטקסט אחרי הציור (וגם אחרי שהפונטים נטענו) ומתאימים את המלבן
@@ -114,7 +115,7 @@ function NodeSheet({ id, p, st, onClose }) {
     <div class="stack">
       <div class="row"><${FieldChip} id=${n.field} long=${true} /><span class="badge">${STATE_TEXT[st]}</span>${isFull(id) ? html`<span class="badge badge-accent">מושג מלא</span>` : html`<span class="badge">כרטיס</span>`}</div>
       ${lv > 0 && html`<${Ladder} level=${lv} fieldId=${n.field} />`}
-      ${c && html`<div class="sheet-lead"><${Emblem} id=${id} size="md" /><p class="lead">${c.oneLiner}</p></div>`}
+      ${c && html`<div class="sheet-lead"><${Emblem} id=${id} size="md" /><p class="lead"><${T} text=${c.oneLiner} /></p></div>`}
       ${locks.length > 0 && html`<p class="muted">כדי לפתוח: בדיקת זיהוי של ${locks.map(title).join(' או ')}.</p>`}
       <div class="row">
         ${st !== 'fog' && st !== 'locked' && html`<a class="btn" href=${`#/c/${id}`}><${Icon} name="book" />${lv > 0 ? 'לחזור למושג' : 'ללמוד'}</a>`}
@@ -222,16 +223,38 @@ export function MapScreen({ ctx, focus }) {
     };
     const wheel = (e) => { e.preventDefault(); const q = local(e); zoomAt(Math.exp(-e.deltaY * 0.0016), q.x, q.y); };
     const key = (e) => { const g = e.target.closest && e.target.closest('[data-node]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setSel(g.getAttribute('data-node')); } };
+    // Tab לצומת שמחוץ לאזור הנראה: המפה זזה אליו באותו זום. אחרת הפוקוס יושב על צומת שלא רואים.
+    // האזור הנראה לא כולל את סרגל הכלים למעלה ואת קנה המידה והמצפן למטה
+    const focusIn = (e) => {
+      const g = e.target.closest && e.target.closest('[data-node]');
+      const q = g && L.pos[g.getAttribute('data-node')];
+      if (!q) return;
+      const v = view.current, r = svg.getBoundingClientRect();
+      const bar = wrap.current && wrap.current.querySelector('.map-toolbar');
+      const top = (bar ? bar.getBoundingClientRect().bottom - r.top : 0) + 24;
+      const bottom = r.height - 90;
+      const sx = v.x + q.x * v.k, sy = v.y + q.y * v.k;
+      if (sx < 32 || sx > r.width - 32 || sy < top || sy > bottom) {
+        v.x = r.width / 2 - q.x * v.k;
+        v.y = (top + bottom) / 2 - q.y * v.k;
+        apply();
+      }
+      // הדפדפן גולל אל מה שקיבל פוקוס גם בתוך מכל עם overflow מוסתר, וזה מזיז את כל המפה
+      const w = wrap.current;
+      if (w && (w.scrollTop || w.scrollLeft)) { w.scrollTop = 0; w.scrollLeft = 0; }
+    };
     svg.addEventListener('pointerdown', down);
     svg.addEventListener('pointermove', move);
     svg.addEventListener('pointerup', up);
     svg.addEventListener('pointercancel', up);
     svg.addEventListener('wheel', wheel, { passive: false });
     svg.addEventListener('keydown', key);
+    svg.addEventListener('focusin', focusIn);
     return () => {
       svg.removeEventListener('pointerdown', down); svg.removeEventListener('pointermove', move);
       svg.removeEventListener('pointerup', up); svg.removeEventListener('pointercancel', up);
       svg.removeEventListener('wheel', wheel); svg.removeEventListener('keydown', key);
+      svg.removeEventListener('focusin', focusIn);
     };
   }, [size.w]);
 

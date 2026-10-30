@@ -7,7 +7,8 @@ import { stations, pools, KINDS, stationName, stationSub, nextAction, hrefOf, ca
 import { Icon } from '../icons.js';
 import { Paras, Emblem, Ill, LevelBadge, Bar, Evidence, Empty } from '../ui.js';
 import { ExerciseView, FirstFallEx, MatchEx } from '../exercises.js';
-import { Planes } from './concept.js';
+import { Planes, CardExamples } from './concept.js';
+import { T } from '../glossary.js';
 
 const HOOK_KIND = { experiment: 'ניסוי', story: 'סיפור', case: 'מקרה', riddle: 'חידה' };
 const EX_ORDER = ['daily', 'finance', 'politics', 'history', 'science', 'business', 'relationships'];
@@ -59,7 +60,7 @@ function HookStep({ c, revealed }) {
     <span class="kicker">${HOOK_KIND[h.kind] || 'פתיחה'}</span>
     <h1 class="sess-h">${h.title}</h1>
     <${Paras} text=${h.body} />
-    ${h.question && html`<p class="hook-q">${h.question}</p>`}
+    ${h.question && html`<p class="hook-q"><${T} text=${h.question} /></p>`}
     ${revealed && html`<div class="reveal-box"><${Paras} text=${h.reveal} /></div>`}
   </div>`;
 }
@@ -67,8 +68,9 @@ function HookStep({ c, revealed }) {
 function EssenceStep({ c }) {
   return html`<div class="stack sess-read">
     <span class="kicker">התמצית</span>
-    <p class="essence">${c.essence.sentence}</p>
-    <ul class="essence-lines">${c.essence.lines.map((l) => html`<li>${l}</li>`)}</ul>
+    <p class="essence"><${T} text=${c.essence.sentence} /></p>
+    <ul class="essence-lines">${c.essence.lines.map((l) => html`<li><${T} text=${l} /></li>`)}</ul>
+    ${c.aka && c.aka.length > 0 && html`<p class="faint sess-aka">נקרא גם: ${c.aka.join(' · ')}</p>`}
   </div>`;
 }
 
@@ -90,9 +92,9 @@ function SpotStep({ c, id }) {
   return html`<div class="stack sess-read">
     <span class="kicker">איך מזהים</span>
     <h2 class="sess-h2">הסימנים שמסגירים את ${c.title.he}</h2>
-    <ul class="spot-list">${c.spotting.signals.map((x) => html`<li>${x}</li>`)}</ul>
+    <ul class="spot-list">${c.spotting.signals.map((x) => html`<li><${T} text=${x} /></li>`)}</ul>
     <span class="label">משפטים אופייניים</span>
-    <ul class="phrases">${c.spotting.phrases.map((x) => html`<li><${Icon} name="quote" />${x}</li>`)}</ul>
+    <ul class="phrases">${c.spotting.phrases.map((x) => html`<li><${Icon} name="quote" /><span><${T} text=${x} /></span></li>`)}</ul>
     <p class="faint sess-deeper">המנגנון, המחקר, המקרים והמקורות לכל טענה נמצאים <a href=${`#/c/${id}`}>בדף המושג המלא</a> (כ־${c.readingMinutes.full} דק׳).</p>
   </div>`;
 }
@@ -101,21 +103,21 @@ function TwinsStep({ c }) {
   return html`<div class="stack sess-read">
     <span class="kicker">התאומים המבלבלים</span>
     <h2 class="sess-h2">לפני הדו־קרב: מה מבדיל את ${c.title.he} מהקרובים שלו</h2>
-    <div class="twins">${c.twins.map((t) => html`<div class="twin"><h3>${t.name}</h3><p>${t.difference}</p><p class="twin-tell"><${Icon} name="scale" />${t.tell}</p></div>`)}</div>
+    <div class="twins">${c.twins.map((t) => html`<div class="twin"><h3>${t.name}</h3><p><${T} text=${t.difference} /></p><p class="twin-tell"><${Icon} name="scale" /><span><${T} text=${t.tell} /></span></p></div>`)}</div>
   </div>`;
 }
 
-function CardStep({ id }) {
+function CardStep({ id, interests }) {
   const c = cardOf(id), n = node(id);
   return html`<article class="stack sess-read sess-card" data-field=${n.field}>
     <div class="concept-title">
       <div class="concept-title-text"><span class="badge">כרטיס קצר</span><h1 class="sess-h">${n.he}</h1><span class="en title-en">${n.en}</span></div>
       <${Emblem} id=${id} size="md" />
     </div>
-    <p class="lead sess-lead">${c.oneLiner}</p>
+    <p class="lead sess-lead"><${T} text=${c.oneLiner} /></p>
     <${Paras} text=${c.body} />
-    <div class="example"><span class="kicker">${c.example.kind === 'real' ? 'מקרה אמיתי' : 'דוגמה'}</span><p>${c.example.text}</p></div>
-    <p class="muted evidence-note"><${Evidence} level=${c.evidence.level} /> ${c.evidence.note}</p>
+    <${CardExamples} c=${c} interests=${interests} />
+    <p class="muted evidence-note"><${Evidence} level=${c.evidence.level} /> <${T} text=${c.evidence.note} /></p>
   </article>`;
 }
 
@@ -249,7 +251,7 @@ function Run({ ctx, sid, onRetry }) {
   else if (step.t === 'example') body = html`<${ExampleStep} c=${c} interests=${state.interests} />`;
   else if (step.t === 'spot') body = html`<${SpotStep} c=${c} id=${s.concept} />`;
   else if (step.t === 'twins') body = html`<${TwinsStep} c=${c} />`;
-  else if (step.t === 'card') body = html`<${CardStep} id=${step.id} />`;
+  else if (step.t === 'card') body = html`<${CardStep} id=${step.id} interests=${state.interests} key=${step.id} />`;
   else if (step.t === 'firstfall') body = html`<${FirstFallStep} onDone=${record} />`;
   else if (step.t === 'match') body = html`<div class="sess-read"><${MatchEx} pairs=${step.pairs} seed=${sid} onDone=${(ok, info) => { record(ok); if (!start.done) actions.award(state, info.firstTry * POINTS.match); }} /></div>`;
   else body = html`<div class="sess-read"><${ExerciseView} ex=${step.ex} onDone=${record} /></div>`;

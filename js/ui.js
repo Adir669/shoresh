@@ -2,11 +2,12 @@
 import { html, useState, useEffect, useRef } from './vendor/standalone.module.js';
 import { Icon, ConnGlyph, FieldGlyph } from './icons.js';
 import { LEVELS, CTYPES, EVIDENCE, field, emblemOf } from './data.js';
+import { T } from './glossary.js';
 
 export const KEYS = ['א', 'ב', 'ג', 'ד'];
 
-// טקסט עם מעברי פסקה (\n\n) לפסקאות
-export const Paras = ({ text }) => String(text || '').split(/\n\n+/).filter(Boolean).map((t) => html`<p>${t}</p>`);
+// טקסט עם מעברי פסקה (\n\n) לפסקאות. מונחי המילון מסומנים בכל פסקה (D-22)
+export const Paras = ({ text }) => String(text || '').split(/\n\n+/).filter(Boolean).map((t) => html`<p><${T} text=${t} /></p>`);
 
 export function FieldChip({ id, long }) {
   const f = field(id);

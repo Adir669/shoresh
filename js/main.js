@@ -4,6 +4,7 @@ import { store } from './store.js';
 import { loadContent, progressOf, demoStore, actions, data, levelOf, title, field, levelInfo, POINTS, pointsFromProgress } from './data.js';
 import { Icon, BrandMark, FieldGlyph } from './icons.js';
 import { Sheet, ToastHost, toast, ErrorBanner, MomentHost, celebrate } from './ui.js';
+import { GlossHost } from './glossary.js';
 import { Onboarding } from './screens/onboarding.js';
 import { PathScreen } from './screens/path.js';
 import { StationScreen } from './screens/station.js';
@@ -238,6 +239,7 @@ function App() {
     ${(sheet === 'seen' || (sheet && sheet.seen)) && html`<${SeenSheet} state=${state} preset=${sheet.seen} onClose=${() => setSheet(null)} />`}
     <${ToastHost} />
     <${MomentHost} />
+    <${GlossHost} />
   </div>`;
 }
 
