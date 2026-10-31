@@ -137,9 +137,9 @@ export function stationDesc(s) {
   const n = ((pools(s.concept) || {}).check || []).length;
   return n === 2 ? 'שני מקרים חדשים. מזהים את שניהם, והשורש מתפצל.' : KINDS.check.desc;
 }
-export const stationSub = (s) => (s.kind === 'cards' ? s.cards.filter((x) => node(x)).map(title).join(' · ') : title(s.concept));
+export const stationSub = (s) => (s.kind === 'cards' ? s.cards.filter((x) => node(x)).map(title).join(', ') : title(s.concept));
 // גרסה קצרה, לשורה אחת (פס הצעד הבא): בכרטיסים רק המושג של השלב וכמה כרטיסים יש
-export const stationShort = (s) => (s.kind === 'cards' ? `${title(s.concept)} · ${s.cards.length === 1 ? 'כרטיס אחד' : `${s.cards.length} כרטיסים`}` : title(s.concept));
+export const stationShort = (s) => (s.kind === 'cards' ? `${title(s.concept)}, ${s.cards.length === 1 ? 'כרטיס אחד' : `${s.cards.length} כרטיסים`}` : title(s.concept));
 
 export function minutesOf(s) {
   if (s.kind === 'lesson') { const c = fullOf(s.concept); return c ? c.readingMinutes.core + 1 : 4; }

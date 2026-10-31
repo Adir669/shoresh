@@ -194,12 +194,11 @@ export function GlossHost() {
     onPointerEnter=${(e) => { if (isMouse(e)) clearTimeout(timer.current); }}
     onPointerLeave=${(e) => { if (isMouse(e) && live.current && live.current.how === 'hover') api.hoverOut(); }}>
     <div class="gloss-head">
-      <span class="gloss-kicker"><${Icon} name="book" />מונח</span>
+      <p class="gloss-term"><strong id="gloss-h">${t.term}</strong>${t.en && html`<span class="gloss-en en" dir="ltr" lang="en">${t.en}</span>`}</p>
       <button class="gloss-x" onClick=${() => close(true)} aria-label="סגירת ההגדרה"><${Icon} name="x" /></button>
     </div>
-    <p class="gloss-term"><strong id="gloss-h">${t.term}</strong>${t.en && html`<span class="gloss-en en" dir="ltr" lang="en">${t.en}</span>`}</p>
     <p class="gloss-def" id="gloss-d">${t.def}</p>
-    ${t.src && t.src.length > 0 && html`<p class="gloss-src">מקור: ${t.src.map((x, i) => html`${i ? ' · ' : ''}<a href=${x.url} target="_blank" rel="noopener" dir="auto">${x.name}<${Icon} name="external" /></a>`)}</p>`}
+    ${t.src && t.src.length > 0 && html`<p class="gloss-src">מקור: ${t.src.map((x, i) => html`${i ? ', ' : ''}<a href=${x.url} target="_blank" rel="noopener" dir="auto">${x.name}<${Icon} name="external" /></a>`)}</p>`}
     ${t.draft && html`<span class="badge badge-gold">טיוטה שעוד לא נבדקה</span>`}
   </div>`;
 }

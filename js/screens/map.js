@@ -299,7 +299,7 @@ export function MapScreen({ ctx, focus }) {
           <rect class="mist" x=${b.x0 - 300} y=${b.y0 - 300} width=${W + 600} height=${H + 600} fill="url(#mist)" mask="url(#fogmask)" />
           <g mask="url(#reveal)"><${Roots} L=${L} D=${D} p=${p} states=${states} faint=${false} /></g>
           <${Sprout} x=${0} y=${18} s=${1.4} />
-          ${L.laterals.map((l) => html`<text class=${l.empty ? 'field-label field-label-empty' : 'field-label'} data-field=${l.field} x=${l.end[0] + l.side * 14} y=${l.end[1] + 30} text-anchor="middle">${field(l.field).short}${l.empty ? ' · בקרוב' : ''}</text>`)}
+          ${L.laterals.map((l) => html`<text class=${l.empty ? 'field-label field-label-empty' : 'field-label'} data-field=${l.field} x=${l.end[0] + l.side * 14} y=${l.end[1] + 30} text-anchor="middle">${field(l.field).short}${l.empty ? ' (בקרוב)' : ''}</text>`)}
           <g class="marks">${Object.entries(L.pos).filter(([id]) => states[id] !== 'fog').map(([id, pos]) => html`<${NodeMark} id=${id} pos=${pos} st=${states[id]} lv=${levelOf(p, id)} caught=${caughtCount(p, id)} selected=${sel === id} />`)}</g>
         </g>
       </svg>
@@ -307,7 +307,7 @@ export function MapScreen({ ctx, focus }) {
       <div class="map-toolbar">
         <div class="map-title">
           <h1>מפת השורשים</h1>
-          <span class="faint">${learnedCount} מושגים בשורשים · ${openCount} ענפים פתוחים${dueCount ? ` · ${dueCount} צריכים השקיה` : ''}</span>
+          <span class="faint">${dueCount ? `${learnedCount} מושגים בשורשים, ${openCount} ענפים פתוחים ו־${dueCount} צריכים השקיה` : `${learnedCount} מושגים בשורשים ו־${openCount} ענפים פתוחים`}</span>
         </div>
         <div class="map-tools">
           <label class="map-demo"><input type="checkbox" checked=${state.demo} onChange=${(e) => store.update((s) => { s.demo = e.target.checked; })} /><span class="track"></span><span>אחרי חודש</span></label>

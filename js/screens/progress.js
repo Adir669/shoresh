@@ -15,7 +15,7 @@ function Stamps({ p }) {
     <div class="section-head"><h2>אוסף החותמות</h2><span class="faint num">${ss.have} מתוך ${ss.total}</span></div>
     <p class="muted stamps-note">כרטיס נכנס לאוסף כשמבינים אותו. הסמל של מושג מלא נחשף רק כשעוברים את מבחן השלב שלו במסלול.</p>
     ${stampGroups().map((g) => html`<div class="stamp-group">
-      <span class="label">שלב ${g.stage + 1} · ${title(g.concept)}</span>
+      <span class="label">שלב ${g.stage + 1}: ${title(g.concept)}</span>
       <div class="stamp-grid">${g.ids.map((id) => {
         const got = hasStamp(p, id);
         return html`<a class=${`stamp-cell${got ? ' is-got' : ''}${id === g.concept ? ' is-main' : ''}`} href=${`#/c/${id}`} aria-label=${`${title(id)}: ${got ? 'נאספה' : 'עוד לא נאספה'}`}>
@@ -27,7 +27,8 @@ function Stamps({ p }) {
   </section>`;
 }
 
-// טביעת האצבע כדיסק דגימה: השורשים שלך בתוך עיגול, על רקע שכבות הקרקע, עם שנתות מעלות מסביב
+// טביעת האצבע כדיסק דגימה: השורשים שלך בתוך עיגול, על רקע שכבות הקרקע, עם טבעת שנתות מסביב.
+// בלי מספרי מעלות: הם לא מודדים כלום (ביקורת Hallmark, 31.10)
 function Fingerprint({ p }) {
   const D = data();
   const L = useMemo(() => layout(D), [D]);
@@ -41,7 +42,7 @@ function Fingerprint({ p }) {
   const fit = `translate(${(-cx * k).toFixed(1)} ${(-cy * k).toFixed(1)}) scale(${k.toFixed(4)})`;
   const ticks = [];
   for (let d = 0; d < 360; d += 10) ticks.push(d);
-  return html`<svg class="fingerprint" viewBox="-170 -170 340 340" role="img" aria-label="טביעת האצבע של השורשים שלך">
+  return html`<svg class="fingerprint fp-chart" viewBox="-152 -152 304 304" role="img" aria-label="תרשים: טביעת האצבע של השורשים שלך">
     <defs><clipPath id="fp-clip"><circle r=${R} /></clipPath></defs>
     <g clip-path="url(#fp-clip)">
       <rect class="fp-sky" x="-170" y="-170" width="340" height="340" />
@@ -61,10 +62,6 @@ function Fingerprint({ p }) {
       const a = (d - 90) * Math.PI / 180, long = d % 30 === 0;
       const r0 = R + 6, r1 = R + (long ? 14 : 10);
       return html`<path d=${`M${(Math.cos(a) * r0).toFixed(1)} ${(Math.sin(a) * r0).toFixed(1)}L${(Math.cos(a) * r1).toFixed(1)} ${(Math.sin(a) * r1).toFixed(1)}`} class=${long ? 'long' : ''} />`;
-    })}</g>
-    <g class="fp-deg" aria-hidden="true">${ticks.filter((d) => d % 30 === 0).map((d) => {
-      const a = (d - 90) * Math.PI / 180;
-      return html`<text x=${(Math.cos(a) * (R + 25)).toFixed(1)} y=${(Math.sin(a) * (R + 25) + 3.5).toFixed(1)} text-anchor="middle">${d}°</text>`;
     })}</g>
   </svg>`;
 }
@@ -101,15 +98,15 @@ export function ProgressScreen({ ctx }) {
   const groups = D.fields.groups;
   const lv = levelInfo(p.points || 0);
   return html`<div class="progress-screen">
-    <div class="screen-title"><span class="kicker">התקדמות</span><h1>מה כבר צמח</h1><p>אין שתי מערכות שורשים זהות. זו טביעת האצבע של הסקרנות שלך.</p></div>
+    <div class="screen-title"><h1>מה כבר צמח</h1><p>אין שתי מערכות שורשים זהות. זו טביעת האצבע של הסקרנות שלך.</p></div>
     <section class="panel level-panel">
       <${LevelBadge} n=${lv.n} size="lg" />
       <div class="lm-body">
         <strong>רמה ${lv.n}</strong>
         <${Bar} value=${lv.into} max=${lv.span} label=${`התקדמות לרמה ${lv.n + 1}`} />
-        <span class="faint num">${p.points || 0} נקודות · עוד ${lv.span - lv.into} לרמה ${lv.n + 1}</span>
+        <span class="faint num">${p.points || 0} נקודות, עוד ${lv.span - lv.into} לרמה ${lv.n + 1}</span>
       </div>
-      <p class="faint level-note">נקודות מגיעות מכל תחנה במסלול, מתשובות נכונות ומהשקיה. רישום ב"ראיתי את זה" שווה ${POINTS.seen}, כמו מבחן שלב שלם. סולם העומק של כל מושג נשאר המדד לשליטה בו.</p>
+      <p class="faint level-note">נקודות מגיעות מכל תחנה במסלול, מתשובות נכונות ומהשקיה. רישום ב“ראיתי את זה” שווה ${POINTS.seen}, כמו מבחן שלב שלם. סולם העומק של כל מושג נשאר המדד לשליטה בו.</p>
     </section>
     <div class="progress-grid">
       <section class="panel fp-panel">
@@ -132,7 +129,7 @@ export function ProgressScreen({ ctx }) {
     <section class="fields-progress">
       <div class="section-head"><h2>לפי תחום</h2></div>
       ${groups.map((g) => html`<div class="fp-group">
-        <span class="label">${g.he} · ${g.sub}</span>
+        <span class="label">${g.he} <span class="group-sub">${g.sub}</span></span>
         <div class="field-rows">${D.fields.fields.filter((f) => f.group === g.id).map((f) => {
           const n = ids.filter((id) => node(id).field === f.id && levelOf(p, id) > 0).length;
           return html`<div class="field-row" data-field=${f.id}>
@@ -145,7 +142,7 @@ export function ProgressScreen({ ctx }) {
     </section>
 
     <section class="journal">
-      <div class="section-head"><h2>יומן "ראיתי את זה"</h2><button class="btn btn-quiet btn-sm" onClick=${() => openSheet('seen')}><${Icon} name="plus" />רישום חדש</button></div>
+      <div class="section-head"><h2>יומן “ראיתי את זה”</h2><button class="btn btn-quiet btn-sm" onClick=${() => openSheet('seen')}><${Icon} name="plus" />רישום חדש</button></div>
       ${p.journal.length ? html`<ol class="journal-list">${p.journal.map((j) => html`<li class="journal-item" data-field=${node(j.concept) ? node(j.concept).field : ''}>
         <span class="ji-date faint">${fmtDate(j.at)}</span>
         <div><a class="ji-title" href=${`#/c/${j.concept}`}>${title(j.concept)}</a>${j.note && html`<p>${j.note}</p>`}</div>

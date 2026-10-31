@@ -7,13 +7,14 @@ import { ExerciseView } from '../exercises.js';
 import { T } from '../glossary.js';
 
 const EX_TABS = [['daily', 'יומיום'], ['finance', 'כסף'], ['politics', 'פוליטיקה'], ['history', 'היסטוריה'], ['science', 'מדע'], ['business', 'עבודה'], ['relationships', 'יחסים']];
+// מספר בעברית תקינה: 0 → "אף אחת לא…", 1 → "אחת…", אחרת המספר
+const count = (n, one, many, none) => (n === 0 ? none : n === 1 ? one : `${n} ${many}`);
 const DOMAIN = { history: 'היסטוריה', politics: 'פוליטיקה', business: 'עסקים', finance: 'כסף', science: 'מדע', health: 'בריאות', law: 'משפט', tech: 'טכנולוגיה', sport: 'ספורט', daily: 'יומיום', military: 'צבא וביטחון' };
-const HOOK_KIND = { experiment: 'ניסוי', story: 'סיפור', case: 'מקרה', riddle: 'חידה' };
 
 // "הבנתי": עלייה לדרגת "מבין". רגע חוויה עם השלב הבא, רק כשהדרגה באמת עולה (D-20)
 function markRead(state, id, lv, full) {
   actions.read(state, id);
-  if (lv >= 2) { toast(`${title(id)}: כבר בדרגת "מבין"`); return; }
+  if (lv >= 2) { toast(`${title(id)}: כבר בדרגת “מבין”`); return; }
   celebrate(full
     ? { title: 'עלית דרגה: מבין', sub: title(id), text: 'השורש ירד שכבה. השלב הבא הוא בדיקת זיהוי: שלושה מקרים חדשים, ושניים נכונים מפצלים את השורש.', href: `#/check/${id}`, cta: 'לבדיקת הזיהוי' }
     : { title: 'עלית דרגה: מבין', sub: title(id), text: 'השורש ירד שכבה. מכאן, כשתפגוש את המושג בחיים, רשום אותו ביומן: זה מה שמקבע אותו.' });
@@ -82,7 +83,6 @@ function Hook({ c }) {
   const [open, setOpen] = useState(false);
   const h = c.hook;
   return html`<div class="hook">
-    <span class="kicker">${HOOK_KIND[h.kind] || 'פתיחה'}</span>
     <h3>${h.title}</h3>
     <${Paras} text=${h.body} />
     ${h.question && html`<p class="hook-q"><${T} text=${h.question} /></p>`}
@@ -124,14 +124,14 @@ export function CardExamples({ c, interests }) {
     const calm = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return true; } })();
     listRef.current.lastElementChild.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' });
   }, [shown]);
-  const label = (e) => `${e.domain && bank ? `${EX_NAME[e.domain]} · ` : ''}${e.kind === 'real' ? 'מקרה אמיתי' : 'דוגמה'}`;
+  const label = (e) => `${e.kind === 'real' ? 'מקרה אמיתי' : 'דוגמה להמחשה'}${e.domain && bank ? ` מעולם ה${EX_NAME[e.domain]}` : ''}`;
   return html`<div class="card-examples">
     <div class="examples-list" aria-live="polite" ref=${listRef}>
       ${list.slice(0, shown).map((e, i) => html`<div class=${`example${i ? ' example-more' : ''}`} key=${`${e.domain}-${i}`}>
         <span class="kicker">${label(e)}</span>
         ${e.title && html`<strong class="example-title">${e.title}</strong>`}
         <p><${T} text=${e.text} /></p>
-        ${e.base ? html`<${Src} ids=${e.sourceIds} sources=${c.sources} />` : (e.src && e.src.length > 0 && html`<p class="example-src faint">מקור: ${e.src.map((x, k) => html`${k ? ' · ' : ''}<a href=${x.url} target="_blank" rel="noopener" dir="auto">${x.name}</a>`)}</p>`)}
+        ${e.base ? html`<${Src} ids=${e.sourceIds} sources=${c.sources} />` : (e.src && e.src.length > 0 && html`<p class="example-src faint">מקור: ${e.src.map((x, k) => html`${k ? ', ' : ''}<a href=${x.url} target="_blank" rel="noopener" dir="auto">${x.name}</a>`)}</p>`)}
       </div>`)}
     </div>
     ${list.length > 1 && (shown < list.length
@@ -200,7 +200,7 @@ export function ConceptScreen({ ctx, id }) {
     <header class="concept-head">
       <div class="row-between"><${Back} href=${`#/map/${id}`} label="למפה" /><${FieldChip} id=${n.field} long=${true} /></div>
       <div class="concept-title">
-        <div class="concept-title-text"><span class="faint concept-family">${c.family}</span><h1>${c.title.he}</h1><span class="en title-en">${c.title.en}</span>${c.aka && c.aka.length > 0 && html`<span class="faint concept-aka">נקרא גם: ${c.aka.join(' · ')}</span>`}</div>
+        <div class="concept-title-text"><span class="faint concept-family">${c.family}</span><h1>${c.title.he}</h1><span class="en title-en">${c.title.en}</span>${c.aka && c.aka.length > 0 && html`<span class="faint concept-aka">נקרא גם: ${c.aka.join(', ')}</span>`}</div>
         <${Emblem} id=${id} size="lg" />
       </div>
       <p class="lead"><${T} text=${c.oneLiner} /></p>
@@ -208,8 +208,8 @@ export function ConceptScreen({ ctx, id }) {
       <${Listen} id=${id} />
       <div class="concept-ladder"><span class="label">סולם העומק שלך</span><${Ladder} level=${lv} fieldId=${n.field} /></div>
       <div class="seg mode-seg" role="group" aria-label="אורך הקריאה">
-        <button aria-pressed=${String(!full)} onClick=${() => setMode('core')}>קריאה קצרה · ${c.readingMinutes.core} דק׳</button>
-        <button aria-pressed=${String(full)} onClick=${() => setMode('full')}>עומק מלא · ${c.readingMinutes.full} דק׳</button>
+        <button aria-pressed=${String(!full)} onClick=${() => setMode('core')}><span>קריאה קצרה</span><span class="seg-sub num">${c.readingMinutes.core} דק׳</span></button>
+        <button aria-pressed=${String(full)} onClick=${() => setMode('full')}><span>עומק מלא</span><span class="seg-sub num">${c.readingMinutes.full} דק׳</span></button>
       </div>
     </header>
 
@@ -232,7 +232,7 @@ export function ConceptScreen({ ctx, id }) {
           <div class="panel panel-quiet stack"><p><strong>מצב הראיות: </strong><${T} text=${c.research.status} /></p><p><strong>ביקורת ומגבלות: </strong><${T} text=${c.research.criticism} /></p><p class="evidence-note"><${Evidence} level=${c.evidence.level} /> <${T} text=${c.evidence.note} /></p></div>
         </${Layer}>`}
         ${full && html`<${Layer} id="l-cases" n="5" name="מקרים מהעולם">
-          <div class="cases">${c.cases.map((cs) => html`<div class="case-card"><span class="kicker">${DOMAIN[cs.domain] || cs.domain}</span><h3>${cs.title}</h3><${Paras} text=${cs.body} /><${Src} ids=${cs.sourceIds} sources=${c.sources} /></div>`)}</div>
+          <div class="cases">${c.cases.map((cs) => html`<div class="case-card"><h3>${cs.title}</h3><${Paras} text=${cs.body} /><div class="case-foot"><span class="case-domain">${DOMAIN[cs.domain] || cs.domain}</span><${Src} ids=${cs.sourceIds} sources=${c.sources} /></div></div>`)}</div>
         </${Layer}>`}
         <${Layer} id="l-spot" n=${full ? 6 : 3} name="איך מזהים">
           <div class="spot">
@@ -248,9 +248,9 @@ export function ConceptScreen({ ctx, id }) {
           <ol class="steps">${c.action.steps.map((s) => html`<li><h3>${s.title}</h3><p><${T} text=${s.body} /></p></li>`)}</ol>
         </${Layer}>`}
         ${full && html`<${Layer} id="l-sources" n="9" name="מקורות והעמקה">
-          ${v && v.status === 'passed' && html`<p class="verify-line"><${Icon} name="shield" />יומן האימות: ${v.claims} טענות נבדקו מול המקורות · ${v.corrected} תוקנו · ${v.removed} הוסרו · אף טענה לא נשארה פתוחה.</p>`}
+          ${v && v.status === 'passed' && html`<p class="verify-line"><${Icon} name="shield" />לפי יומן האימות, ${v.claims} טענות נבדקו מול המקורות: ${count(v.corrected, 'אחת תוקנה', 'תוקנו', 'אף אחת לא תוקנה')}, ${count(v.removed, 'אחת הוסרה', 'הוסרו', 'אף אחת לא הוסרה')}, ואף אחת לא נשארה פתוחה.</p>`}
           <ol class="sources">${c.sources.map((s) => html`<li id=${`src-${s.id}`}><span class="en">${s.citation}</span> <a href=${s.url} target="_blank" rel="noopener">קישור<${Icon} name="external" /></a></li>`)}</ol>
-          <div class="further">${c.further.map((f) => html`<a class="tile" href=${f.url} target="_blank" rel="noopener"><span class="kicker">${{ book: 'ספר', video: 'וידאו', article: 'מאמר', podcast: 'פודקאסט', course: 'קורס' }[f.kind]}</span><strong>${f.title}</strong><span class="faint">${f.by}</span><p class="muted">${f.why}</p></a>`)}</div>
+          <div class="further">${c.further.map((f) => html`<a class="tile" href=${f.url} target="_blank" rel="noopener"><strong>${f.title}</strong><span class="faint">${{ book: 'ספר', video: 'סרטון', article: 'מאמר', podcast: 'פודקאסט', course: 'קורס' }[f.kind] || 'מקור'}${f.by ? ` מאת ${f.by}` : ''}</span><p class="muted">${f.why}</p></a>`)}</div>
         </${Layer}>`}
         <${Layer} id="l-practice" n=${full ? 10 : 5} name="תרגול">
           <p class="muted">${c.exercises.length} תרגילים במושג הזה. בדיקת הזיהוי בוחרת שלושה מקרים חדשים, ושניים נכונים מתוכם פותחים את הענפים.</p>
@@ -291,7 +291,7 @@ export function CheckScreen({ ctx, id }) {
   };
   return html`<div class="check read">
     <div class="row-between"><${Back} href=${`#/c/${id}`} label=${c.title.he} /><span class="faint num">${Math.min(score.length + 1, items.length)} מתוך ${items.length}</span></div>
-    <div class="screen-title"><span class="kicker">בדיקת זיהוי</span><h1>${c.title.he}</h1><p>שלושה מקרים חדשים. מזהים שניים, והשורש מתפצל.</p></div>
+    <div class="screen-title"><h1>בדיקת זיהוי: ${c.title.he}</h1><p>שלושה מקרים חדשים. מזהים שניים, והשורש מתפצל.</p></div>
     <div class="dots">${items.map((_, k) => html`<span class=${`dot-step${k < score.length ? (score[k] ? ' ok' : ' bad') : k === i ? ' now' : ''}`}></span>`)}</div>
     ${!done ? html`<div key=${i}>
       <${ExerciseView} ex=${items[i]} onDone=${record} />
@@ -300,7 +300,7 @@ export function CheckScreen({ ctx, id }) {
       ${passed && html`<${Ill} name="mo-branch" size="lg" />`}
       <div class=${`result-badge${passed ? ' ok' : ''}`}><${Icon} name=${passed ? 'unlock' : 'refresh'} /><strong>${right} מתוך ${items.length}</strong></div>
       <h2>${passed ? 'זיהית. השורש מתפצל.' : 'כמעט. עוד סיבוב קטן.'}</h2>
-      <p class="muted">${passed ? 'הגעת לדרגת "מזהה". אלה הענפים שנפתחו עכשיו:' : 'כדאי לעבור שוב על "איך מזהים" ועל התאומים, ולנסות שוב.'}</p>
+      <p class="muted">${passed ? 'הגעת לדרגת “מזהה”. אלה הענפים שנפתחו עכשיו:' : 'כדאי לעבור שוב על “איך מזהים” ועל התאומים, ולנסות שוב.'}</p>
       ${passed ? html`<div class="conn-list">${edgesOut(id).map((e) => html`<a class="conn" data-field=${node(e.to).field} href=${`#/bridge/${id}/${e.to}`}><${CType} type=${e.type} /><span class="conn-name">${title(e.to)}</span><${Icon} name="next" /></a>`)}</div>`
         : html`<div class="row"><a class="btn" href=${`#/c/${id}`}>חזרה למושג</a><button class="btn btn-ghost" onClick=${() => { setI(0); setScore([]); }}>לנסות שוב</button></div>`}
     </div>`}

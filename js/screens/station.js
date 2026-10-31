@@ -10,7 +10,6 @@ import { ExerciseView, FirstFallEx, MatchEx } from '../exercises.js';
 import { Planes, CardExamples } from './concept.js';
 import { T } from '../glossary.js';
 
-const HOOK_KIND = { experiment: 'ניסוי', story: 'סיפור', case: 'מקרה', riddle: 'חידה' };
 const EX_ORDER = ['daily', 'finance', 'politics', 'history', 'science', 'business', 'relationships'];
 const EX_NAME = { daily: 'יומיום', finance: 'כסף', politics: 'פוליטיקה', history: 'היסטוריה', science: 'מדע', business: 'עבודה', relationships: 'יחסים' };
 const ANSWERED = ['ex', 'match', 'firstfall'];
@@ -57,7 +56,6 @@ function passMark(kind, n) {
 function HookStep({ c, revealed }) {
   const h = c.hook;
   return html`<div class="stack sess-read">
-    <span class="kicker">${HOOK_KIND[h.kind] || 'פתיחה'}</span>
     <h1 class="sess-h">${h.title}</h1>
     <${Paras} text=${h.body} />
     ${h.question && html`<p class="hook-q"><${T} text=${h.question} /></p>`}
@@ -67,10 +65,9 @@ function HookStep({ c, revealed }) {
 
 function EssenceStep({ c }) {
   return html`<div class="stack sess-read">
-    <span class="kicker">התמצית</span>
     <p class="essence"><${T} text=${c.essence.sentence} /></p>
     <ul class="essence-lines">${c.essence.lines.map((l) => html`<li><${T} text=${l} /></li>`)}</ul>
-    ${c.aka && c.aka.length > 0 && html`<p class="faint sess-aka">נקרא גם: ${c.aka.join(' · ')}</p>`}
+    ${c.aka && c.aka.length > 0 && html`<p class="faint sess-aka">נקרא גם: ${c.aka.join(', ')}</p>`}
   </div>`;
 }
 
@@ -80,7 +77,7 @@ function ExampleStep({ c, interests }) {
   const [k, setK] = useState(keys.includes(want) ? want : keys[0]);
   const e = c.examples[k];
   return html`<div class="stack sess-read">
-    <span class="kicker">דוגמה מהעולם שלך · ${EX_NAME[k]}</span>
+    <span class="kicker">דוגמה מהעולם שלך: ${EX_NAME[k]}</span>
     <h2 class="sess-h2">${e.title}</h2>
     <div class="example-body" key=${k}><${Paras} text=${e.body} /></div>
     <span class="faint">${e.kind === 'real' ? 'מקרה אמיתי' : 'דוגמה להמחשה'}</span>
@@ -90,7 +87,6 @@ function ExampleStep({ c, interests }) {
 
 function SpotStep({ c, id }) {
   return html`<div class="stack sess-read">
-    <span class="kicker">איך מזהים</span>
     <h2 class="sess-h2">הסימנים שמסגירים את ${c.title.he}</h2>
     <ul class="spot-list">${c.spotting.signals.map((x) => html`<li><${T} text=${x} /></li>`)}</ul>
     <span class="label">משפטים אופייניים</span>
@@ -101,7 +97,6 @@ function SpotStep({ c, id }) {
 
 function TwinsStep({ c }) {
   return html`<div class="stack sess-read">
-    <span class="kicker">התאומים המבלבלים</span>
     <h2 class="sess-h2">לפני הדו־קרב: מה מבדיל את ${c.title.he} מהקרובים שלו</h2>
     <div class="twins">${c.twins.map((t) => html`<div class="twin"><h3>${t.name}</h3><p><${T} text=${t.difference} /></p><p class="twin-tell"><${Icon} name="scale" /><span><${T} text=${t.tell} /></span></p></div>`)}</div>
   </div>`;
@@ -124,8 +119,7 @@ function CardStep({ id, interests }) {
 function FirstFallStep({ onDone }) {
   const ff = data().samples.firstfall;
   return html`<div class="stack sess-read">
-    <span class="kicker">קודם נופלים</span>
-    <h2 class="sess-h2">${ff.title}</h2>
+    <h2 class="sess-h2">קודם נופלים: ${ff.title}</h2>
     <p class="muted">ענו מהבטן, לפני שאתם חושבים יותר מדי. ההסבר מגיע בכרטיס הבא.</p>
     <div class="exercise"><${FirstFallEx} ex=${ff} onDone=${onDone} /></div>
   </div>`;
@@ -150,9 +144,9 @@ function Result({ s, p, state, start, res, onRetry }) {
         : s.kind === 'duel' ? 'הבחנה מדויקת'
           : 'התחנה הושלמה';
   const line = !res.passed
-    ? (s.kind === 'test' ? `צריך ${res.need} נכונות מתוך ${res.total}. אפשר לנסות שוב מיד, או לחזור קודם לתחנות של השלב.` : `צריך ${res.need} נכונות מתוך ${res.total}. כדאי לעבור שוב על "איך מזהים" ועל התאומים, ולנסות שוב.`)
+    ? (s.kind === 'test' ? `צריך ${res.need} נכונות מתוך ${res.total}. אפשר לנסות שוב מיד, או לחזור קודם לתחנות של השלב.` : `צריך ${res.need} נכונות מתוך ${res.total}. כדאי לעבור שוב על “איך מזהים” ועל התאומים, ולנסות שוב.`)
     : start.done ? 'חזרה על תחנה שכבר הושלמה. חזרה מחזקת את הזיכרון, ובחזרה הנקודות מגיעות רק מתשובות נכונות.'
-    : sealed ? `החותמת של ${title(id)} נכנסה לאוסף. מכאן, כשתפגוש את המושג בחיים, רשום אותו ב"ראיתי את זה".`
+    : sealed ? `החותמת של ${title(id)} נכנסה לאוסף. מכאן, כשתפגוש את המושג בחיים, רשום אותו ב“ראיתי את זה”.`
       : s.kind === 'lesson' ? 'השורש ירד שכבה. בתחנה הבאה בודקים שהמושג ברור, ואחר כך מזהים אותו במקרים חדשים.'
         : s.kind === 'check' ? 'הענפים של המושג נפתחו: הכרטיסים הבאים במסלול הם המושגים הקרובים אליו.'
           : s.kind === 'cards' ? 'הכרטיסים נכנסו לאוסף, וההשקיה תחזיר אותם בעוד יום.'
@@ -270,7 +264,7 @@ function Run({ ctx, sid, onRetry }) {
       <div class="sess-bar" role="progressbar" aria-label="ההתקדמות בתחנה" aria-valuemin="0" aria-valuemax="100" aria-valuenow=${Math.round(progress * 100)}><i style=${`--p:${progress}`}></i></div>
       <span class="sess-pts num"><${Icon} name="star" /><span class="sr-only">נקודות בתחנה הזאת: </span>${earned}</span>
     </header>
-    ${!res && html`<div class="sess-title"><span class="kicker"><${Icon} name=${KINDS[s.kind].icon} />${stationName(s)}</span><span class="faint">${stationSub(s)} · שלב ${s.stage + 1}</span></div>`}
+    ${!res && html`<div class="sess-title"><span class="kicker"><${Icon} name=${KINDS[s.kind].icon} />${stationName(s)}</span><span class="faint">שלב ${s.stage + 1}: ${stationSub(s)}</span></div>`}
     <div class="sess-body" key=${res ? 'r' : i}>${body}</div>
     ${foot && html`<footer class="sess-foot">${foot}</footer>`}
   </div>`;

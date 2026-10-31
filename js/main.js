@@ -135,8 +135,8 @@ function SeenSheet({ state, onClose, preset }) {
     actions.seen(state, pick, note);
     onClose();
     // מי שכבר מזהה ופוגש את המושג בחיים מגיע לדרגה העמוקה: "משתמש"
-    if (before >= 3 && before < 5) celebrate({ title: 'עלית דרגה: משתמש', sub: fresh ? `${title(pick)} · +${POINTS.seen} נקודות` : title(pick), text: 'פגשת את המושג בחיים ורשמת אותו. זו הדרגה העמוקה בסולם: הידע הפך לזיהוי.' });
-    else toast(`נרשם ביומן: ${title(pick)}${fresh ? ` · +${POINTS.seen} נקודות` : ''}`);
+    if (before >= 3 && before < 5) celebrate({ title: 'עלית דרגה: משתמש', sub: fresh ? `${title(pick)} (+${POINTS.seen} נקודות)` : title(pick), text: 'פגשת את המושג בחיים ורשמת אותו. זו הדרגה העמוקה בסולם: הידע הפך לזיהוי.' });
+    else toast(`נרשם ביומן: ${title(pick)}${fresh ? ` (+${POINTS.seen} נקודות)` : ''}`);
   };
   return html`<${Sheet} title="ראיתי את זה היום" sub="איפה פגשת מושג בחיים? כל רישום כזה מקבע את הזיכרון יותר מכל תרגיל." onClose=${onClose}>
     ${!pick ? html`<div class="stack">
@@ -193,7 +193,7 @@ function App() {
   useEffect(() => {
     if (!ready || route.name === 'go' || lvNow <= (pp.levelSeen || 1)) return;
     actions.levelShown(state, lvNow);
-    celebrate({ level: lvNow, title: `עלית לרמה ${lvNow}`, sub: `${ptsNow} נקודות`, text: `כל תחנה במסלול, תשובה נכונה, השקיה ורישום ב"ראיתי את זה" מקדמים אותך. הרמה הבאה מתחילה ב־${levelInfo(ptsNow).next} נקודות.` });
+    celebrate({ level: lvNow, title: `עלית לרמה ${lvNow}`, sub: `${ptsNow} נקודות`, text: `כל תחנה במסלול, תשובה נכונה, השקיה ורישום ב“ראיתי את זה” מקדמים אותך. הרמה הבאה מתחילה ב־${levelInfo(ptsNow).next} נקודות.` });
   });
 
   if (err) return html`<div class="app"><main class="main"><div class="wrap stack"><${ErrorBanner} text=${`לא הצלחתי לטעון את התוכן (${err}).`} onRetry=${load} /></div></main></div>`;

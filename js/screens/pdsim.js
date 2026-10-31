@@ -58,7 +58,7 @@ export function PDSim() {
 
   return html`<div class="pdsim read">
     <${Back} href="#/practice" label="לתרגול" />
-    <div class="screen-title"><span class="kicker">סימולציה</span><h1>דילמת האסיר</h1><p>${it ? html`<${T} text=${it.intro} />` : 'שני שחקנים בוחרים בו־זמנית: לשתף פעולה או לבגוד. כל אחד מעדיף לבגוד, אבל אם שניהם בוגדים, שניהם מפסידים.'}</p></div>
+    <div class="screen-title"><h1>סימולציה של דילמת האסיר</h1><p>${it ? html`<${T} text=${it.intro} />` : 'שני שחקנים בוחרים בו־זמנית: לשתף פעולה או לבגוד. כל אחד מעדיף לבגוד, אבל אם שניהם בוגדים, שניהם מפסידים.'}</p></div>
     ${c && c.draft && html`<span class="badge badge-gold">טיוטה שעוד לא נבדקה</span>`}
 
     <div class="matrix" role="table" aria-label="טבלת התשלומים: הנקודות שלך, הנקודות של היריב">
@@ -66,13 +66,13 @@ export function PDSim() {
       <div class="m-head" role="columnheader">הוא משתף</div>
       <div class="m-head" role="columnheader">הוא בוגד</div>
       <div class="m-head m-row" role="rowheader">אתה משתף</div>
-      <div class="m-cell" role="cell"><b class="num">${P.R}</b> · <span class="num">${P.R}</span></div>
-      <div class="m-cell" role="cell"><b class="num">${P.S}</b> · <span class="num">${P.T}</span></div>
+      <div class="m-cell" role="cell"><b class="num">${P.R}</b>, <span class="num">${P.R}</span></div>
+      <div class="m-cell" role="cell"><b class="num">${P.S}</b>, <span class="num">${P.T}</span></div>
       <div class="m-head m-row" role="rowheader">אתה בוגד</div>
-      <div class="m-cell" role="cell"><b class="num">${P.T}</b> · <span class="num">${P.S}</span></div>
-      <div class="m-cell" role="cell"><b class="num">${P.P}</b> · <span class="num">${P.P}</span></div>
+      <div class="m-cell" role="cell"><b class="num">${P.T}</b>, <span class="num">${P.S}</span></div>
+      <div class="m-cell" role="cell"><b class="num">${P.P}</b>, <span class="num">${P.P}</span></div>
     </div>
-    <p class="faint matrix-note">המספר המודגש הוא שלך. בכל משבצת: הנקודות שלך · הנקודות שלו.</p>
+    <p class="faint matrix-note">המספר המודגש הוא שלך. בכל משבצת: הנקודות שלך, ואחריהן הנקודות שלו.</p>
 
     <div class="pd-board panel">
       <div class="row-between"><span class="label">סיבוב ${Math.min(mine.length + 1, ROUNDS)} מתוך ${ROUNDS}</span><span class="pd-score num"><b>${scores[0]}</b> : ${scores[1]}</span></div>

@@ -26,7 +26,7 @@ export function Debate() {
   };
   return html`<div class="debate read">
     <${Back} href="#/practice" label="לתרגול" />
-    <div class="screen-title"><span class="kicker">ויכוח עם סופיסט</span><h1>${d.title}</h1><p><${T} text=${d.intro} /></p></div>
+    <div class="screen-title"><h1>ויכוח עם סופיסט: ${d.title}</h1><p><${T} text=${d.intro} /></p></div>
     <${DemoNote}>בגרסה המלאה הבינה המלאכותית מתווכחת איתך באמת, על נושא שתבחר. כאן הוויכוח כתוב מראש.</${DemoNote}>
     <div class="chat" aria-live="polite">
       ${turns.map((t, i) => html`<div class=${`bubble-row ${t.who}`}>
@@ -56,7 +56,7 @@ export function Eli10() {
   const f = e.feedback;
   return html`<div class="eli10 read">
     <${Back} href="#/practice" label="לתרגול" />
-    <div class="screen-title"><span class="kicker">תסביר כאילו אני בן 10</span><h1>${title(e.concept)}</h1><p><${T} text=${e.prompt} /></p></div>
+    <div class="screen-title"><h1>תסביר כאילו אני בן 10: ${title(e.concept)}</h1><p><${T} text=${e.prompt} /></p></div>
     <${DemoNote}>המשוב כאן הוכן מראש לתשובה לדוגמה שכבר כתובה בתיבה. בגרסה המלאה הבינה המלאכותית קוראת את מה שאתה כותב.</${DemoNote}>
     <label><span class="field-label">ההסבר שלך</span><textarea class="textarea" dir="auto" value=${text} onInput=${(ev) => setText(ev.target.value)}></textarea></label>
     ${!fb ? html`<button class="btn" onClick=${() => setFb(true)}><${Icon} name="pencil" />לקבל משוב</button>` : html`<div class="eli-feedback stack">

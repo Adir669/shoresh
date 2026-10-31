@@ -151,8 +151,8 @@ function makeDemo() {
   put('anchoring', 2, 1, 3, 28); put('replication-crisis', 1, 0, 2, 9); put('pyrrhic-victory', 1, 0, 5, 24);
   const journal = [
     { id: 'j1', concept: 'confirmation-bias', at: ago(27, 3), note: 'בוויכוח על מחקר חדש שמתי לב שאני מחפש רק כתבות שמסכימות איתי. עצרתי וחיפשתי את הצד השני.' },
-    { id: 'j2', concept: 'sunk-cost', at: ago(22, 5), note: 'כמעט נשארנו להופעה משעממת "כי כבר שילמנו". יצאנו בהפסקה, והערב רק השתפר.' },
-    { id: 'j3', concept: 'survivorship-bias', at: ago(18, 2), note: 'פוסט על "ההרגלים של אנשים מצליחים". ומה עם כל מי שעשה בדיוק את אותו הדבר ולא הצליח?' },
+    { id: 'j2', concept: 'sunk-cost', at: ago(22, 5), note: 'כמעט נשארנו להופעה משעממת “כי כבר שילמנו”. יצאנו בהפסקה, והערב רק השתפר.' },
+    { id: 'j3', concept: 'survivorship-bias', at: ago(18, 2), note: 'פוסט על “ההרגלים של אנשים מצליחים”. ומה עם כל מי שעשה בדיוק את אותו הדבר ולא הצליח?' },
     { id: 'j4', concept: 'confirmation-bias', at: ago(12, 6), note: 'בישיבת צוות הצעתי לחפש נתון שיכול להפריך את התוכנית שלנו, ולא רק נתונים שמאששים אותה.' },
     { id: 'j5', concept: 'prisoners-dilemma', at: ago(9, 1), note: 'שני בתי קפה ברחוב הורידו מחירים אחד אחרי השני, ועכשיו שניהם מרוויחים פחות.' },
     { id: 'j6', concept: 'affirming-the-consequent', at: ago(4, 4), note: '"אם הוא היה אשם, הוא היה לחוץ. הוא לחוץ, אז הוא אשם." תפסתי את זה בסדרה, ושמחתי שזיהיתי.' },

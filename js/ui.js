@@ -134,7 +134,8 @@ export function Opt({ i, text, state, onClick, disabled }) {
 }
 
 export function Feedback({ ok, title, children }) {
-  return html`<div class="feedback" data-ok=${ok === undefined ? '' : String(ok)} role="status"><h4>${title}</h4>${children}</div>`;
+  const mark = ok === true ? 'check' : ok === false ? 'x' : null;
+  return html`<div class="feedback" data-ok=${ok === undefined ? '' : String(ok)} role="status"><h4>${mark && html`<${Icon} name=${mark} />`}${title}</h4>${children}</div>`;
 }
 
 export function Back({ href = '#/home', label = 'חזרה' }) {

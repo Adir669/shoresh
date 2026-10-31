@@ -21,12 +21,13 @@
 [data-field="expressions"] { --field: var(--f-expressions); }
 [data-field="paradoxes"] { --field: var(--f-paradoxes); }
 
-/* ── מסגרת סקר: קו חיצוני וקו שיער פנימי ── */
+/* ── קופסה רגילה: קו אחד. המסגרת הכפולה של הסקר (קו חיצוני וקו שיער פנימי) שמורה ללוח אחד בכל מסך
+   ולחותמות: התחנה הנוכחית, תיבת המשפט בראש דף המושג, כותרת המפה והמקרא, לוח הפתיחה, וסימון בחירה
+   (ביקורת Hallmark, 31.10: כשהיא על כל קופסה, היא כבר לא מסמנת מה חשוב) ── */
 .frame, .panel, .tile {
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-md);
-  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line);
 }
 /* סימני פינות של גיליון מדידה */
 .corners { position: relative; }
@@ -119,20 +120,21 @@
   font-weight: var(--fw-strong); font-size: var(--fs-md); line-height: 1;
   text-decoration: none; white-space: nowrap;
   transition: transform var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.14) inset, 0 6px 14px -10px rgb(var(--shadow-rgb) / 0.6);
+  box-shadow: 0 1px 0 var(--sheen) inset, 0 6px 14px -10px rgb(var(--shadow-rgb) / 0.6);
 }
-.btn:hover { box-shadow: 0 1px 0 rgb(255 255 255 / 0.14) inset, 0 10px 20px -12px rgb(var(--shadow-rgb) / 0.65); }
-.btn:active { transform: scale(0.98); }
+.btn:hover:not(:disabled) { box-shadow: 0 1px 0 var(--sheen) inset, 0 10px 20px -12px rgb(var(--shadow-rgb) / 0.65); }
+.btn:active:not(:disabled) { transform: scale(0.98); }
 .btn svg { width: 20px; height: 20px; flex: none; }
 .btn-moss { --btn-bg: var(--moss); --btn-ink: var(--moss-ink); }
 .btn-ghost { --btn-bg: transparent; --btn-ink: var(--ink); border-color: var(--line-strong); box-shadow: none; }
-.btn-ghost:hover { background: var(--surface-2); box-shadow: none; }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-2); box-shadow: none; }
 .btn-quiet { --btn-bg: transparent; --btn-ink: var(--accent); box-shadow: none; padding-inline: var(--s-3); }
-.btn-quiet:hover { background: var(--accent-soft); box-shadow: none; }
+.btn-quiet:hover:not(:disabled) { background: var(--accent-soft); box-shadow: none; }
 .btn-gold { --btn-bg: var(--gold); --btn-ink: var(--bg); }
 .btn-sm { min-height: 36px; padding-inline: var(--s-4); font-size: var(--fs-sm); }
 .btn-block { width: 100%; }
-.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.45; pointer-events: none; }
+/* מושבת בשלושה ערוצים: שקיפות, סמן "אסור" והתכונה disabled עצמה (היא שחוסמת לחיצה). בלי pointer-events: none, שהעלים את הסמן */
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .icon-btn {
   display: inline-grid; place-items: center; width: 42px; height: 42px;
   border: 0; border-radius: var(--r-sm); background: transparent; color: var(--ink-2);
@@ -151,10 +153,10 @@
   padding: var(--s-5);
   transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
 }
-.tile:hover { transform: translateY(-2px); border-color: var(--ink-3); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line), 0 16px 30px -22px rgb(var(--shadow-rgb) / 0.55); }
+.tile:hover { transform: translateY(-2px); border-color: var(--ink-3); box-shadow: 0 16px 30px -22px rgb(var(--shadow-rgb) / 0.55); }
 .tile:active { transform: translateY(0) scale(0.99); }
-.tile-field { box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px color-mix(in oklab, var(--field, var(--line)) 55%, var(--line)); }
-.tile-field:hover { box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px color-mix(in oklab, var(--field, var(--line)) 70%, var(--line)), 0 16px 30px -22px rgb(var(--shadow-rgb) / 0.55); }
+.tile-field { border-color: color-mix(in oklab, var(--field, var(--line-strong)) 55%, var(--line-strong)); }
+.tile-field:hover { border-color: color-mix(in oklab, var(--field, var(--line-strong)) 80%, var(--ink-3)); box-shadow: 0 16px 30px -22px rgb(var(--shadow-rgb) / 0.55); }
 .divider { height: 1px; background: var(--line); border: 0; margin: var(--s-6) 0; }
 
 /* ── חותמות: שבבים ותגיות ── */
@@ -258,15 +260,14 @@
 .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ── גיליון (מלמטה בנייד, מהצד השמאלי במחשב) ── */
-.scrim { position: fixed; inset: 0; z-index: 40; background: rgb(var(--shadow-rgb) / 0.42); animation: fade var(--dur-2) var(--ease-out) both; }
-:root[data-mode="dark"] .scrim { background: rgb(0 0 0 / 0.58); }
+.scrim { position: fixed; inset: 0; z-index: 40; background: var(--scrim); animation: fade var(--dur-2) var(--ease-out) both; }
 .sheet {
   position: fixed; z-index: 41; inset-inline: 0; inset-block-end: 0;
   max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain;
   background: var(--surface); border-radius: var(--r-xl) var(--r-xl) 0 0;
   border: 1px solid var(--line-strong); border-block-end: 0;
   padding: var(--s-3) var(--s-5) calc(var(--s-6) + env(safe-area-inset-bottom));
-  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line), 0 -20px 50px -30px rgb(var(--shadow-rgb) / 0.55);
+  box-shadow: 0 -20px 50px -30px rgb(var(--shadow-rgb) / 0.55);
   animation: sheet-up var(--dur-3) var(--ease-out) both;
 }
 .sheet-grip { width: 40px; height: 4px; border-radius: var(--r-pill); background: var(--line-strong); margin: 0 auto var(--s-4); }
@@ -317,11 +318,15 @@
 .opt[disabled] { cursor: default; }
 .feedback {
   border-radius: var(--r-sm); padding: var(--s-4) var(--s-5); background: var(--surface-2);
-  border: 1px solid var(--line); border-inline-start: 3px solid var(--ink-3); animation: rise var(--dur-3) var(--ease-out) both;
+  border: 1px solid var(--line-strong); animation: rise var(--dur-3) var(--ease-out) both;
 }
-.feedback[data-ok="true"] { border-inline-start-color: var(--ok); }
-.feedback[data-ok="false"] { border-inline-start-color: var(--bad); }
-.feedback h4 { font-family: var(--font-body); font-weight: var(--fw-heavy); font-size: var(--fs-md); margin-block-end: var(--s-1); }
+/* המצב נראה במסגרת ובסימן שליד הכותרת (וי או איקס), לא בפס צבעוני בצד */
+.feedback[data-ok="true"] { border-color: color-mix(in oklab, var(--ok) 60%, var(--line)); }
+.feedback[data-ok="false"] { border-color: color-mix(in oklab, var(--bad) 60%, var(--line)); }
+.feedback h4 { display: flex; align-items: center; gap: var(--s-2); font-family: var(--font-body); font-weight: var(--fw-heavy); font-size: var(--fs-md); margin-block-end: var(--s-1); }
+.feedback h4 svg { width: 20px; height: 20px; flex: none; stroke-width: 2.2; }
+.feedback[data-ok="true"] h4 svg { color: var(--ok); }
+.feedback[data-ok="false"] h4 svg { color: var(--bad); }
 
 /* ── מצבים: טעינה, ריק, שגיאה ── */
 .skeleton { border-radius: var(--r-sm); background: linear-gradient(90deg, var(--surface-2) 0%, var(--line) 40%, var(--surface-2) 80%); background-size: 300% 100%; animation: shimmer 1.4s linear infinite; }
@@ -460,9 +465,9 @@
 }
 .gloss-pop[data-place="below"]::before { top: -7px; border-right: 0; border-bottom: 0; }
 .gloss-pop[data-place="above"]::before { bottom: -7px; border-left: 0; border-top: 0; }
-.gloss-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); margin-block-end: calc(var(--s-1) * -1); }
-.gloss-kicker { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--ink-3); }
-.gloss-kicker svg { width: 14px; height: 14px; color: var(--accent); }
+/* ראש החלונית: המונח עצמו והכפתור לסגירה, בלי תווית "מונח" מעליו (ביקורת Hallmark, 31.10) */
+.gloss-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); }
+.gloss-head .gloss-term { flex: 1; min-width: 0; }
 .gloss-x {
   display: grid; place-items: center; width: 36px; height: 36px; margin: -8px; flex: none;
   border: 0; border-radius: var(--r-sm); background: none; color: var(--ink-3); cursor: pointer;

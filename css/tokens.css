@@ -35,6 +35,9 @@
   --dur-2: 260ms;
   --dur-3: 520ms;
 
+  /* ברק עליון על כפתור מלא: בגוון הנייר, לא לבן טהור (ביקורת Hallmark, 31.10) */
+  --sheen: rgb(255 248 240 / 0.14);
+
   /* מבנה */
   --topbar-h: 58px;
   --tabbar-h: 66px;
@@ -62,6 +65,7 @@
   --gold: #7B5918; --gold-soft: #F1E2BF;
   --ok: #4E6B35; --ok-soft: #E1E8D2; --bad: #A23D29; --bad-soft: #F3DDD3;
   --shadow-rgb: 74 56 34;
+  --scrim: rgb(var(--shadow-rgb) / 0.42);
   --fl: 0.52; --fc: 0.07;
   --map-bg: #EDE3D0; --map-ink: #2B2621;
   /* שכבות הקרקע: בסיס ומרקם */
@@ -85,6 +89,8 @@
   --gold: #DDB362; --gold-soft: #3A3020;
   --ok: #A3BD7D; --ok-soft: #232B1B; --bad: #EC917B; --bad-soft: #3D231D;
   --shadow-rgb: 0 0 0;
+  /* מסך מחשיך מאחורי גיליון: כמעט שחור בגוון האדמה */
+  --scrim: rgb(12 9 7 / 0.58);
   --fl: 0.74; --fc: 0.07;
   --map-bg: #1A1612; --map-ink: #EFE5D4;
   --st-surface: #B59573;

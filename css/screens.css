@@ -31,7 +31,6 @@
 .interest {
   display: flex; gap: var(--s-4); align-items: center; padding: var(--s-4); text-align: start; color: var(--ink);
   border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface);
-  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
 .interest:hover { border-color: var(--ink-3); }
@@ -52,12 +51,12 @@
 .seen-cta:active { transform: scale(0.99); }
 .seen-cta > span:last-child { display: grid; gap: 2px; }
 .seen-cta .muted { font-size: var(--fs-sm); line-height: var(--lh-snug); }
-.seen-icon { display: grid; place-items: center; width: 46px; height: 46px; flex: none; border-radius: 50%; background: var(--surface); border: 1px solid var(--line-strong); color: var(--accent); }
-.seen-icon svg { width: 24px; height: 24px; }
+.seen-icon { display: grid; place-items: center; flex: none; color: var(--accent); }
+.seen-icon svg { width: 28px; height: 28px; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding-block: var(--s-3); border-block: 1px solid var(--line-strong); }
 .stats > div { display: grid; gap: 2px; padding: var(--s-2) var(--s-4); border-inline-start: 1px solid var(--line); }
 .stats > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
-.stats strong { font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-2xl); line-height: 1; }
+.stats strong { font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-2xl); line-height: 1; font-variant-numeric: tabular-nums; }
 .stats span { font-size: var(--fs-xs); color: var(--ink-2); line-height: 1.35; }
 
 /* ── מפה ── */
@@ -176,6 +175,10 @@
 .meta { gap: var(--s-2); }
 .concept-ladder { display: grid; gap: var(--s-3); width: min(100%, 480px); margin-block-start: var(--s-3); }
 .mode-seg { margin-block-start: var(--s-2); }
+/* אורך הקריאה בשורה נפרדת מתחת לשם, במקום נקודה מפרידה */
+.mode-seg button { display: grid; justify-items: center; gap: 1px; line-height: 1.3; }
+.seg-sub { font-size: var(--fs-xs); font-weight: var(--fw-body); color: var(--ink-3); }
+.mode-seg button[aria-pressed="true"] .seg-sub { color: var(--ink-2); }
 .concept-body { display: grid; gap: var(--s-8); }
 @media (min-width: 1180px) { .concept-body { grid-template-columns: 180px minmax(0, 1fr); } }
 .toc { display: none; }
@@ -190,12 +193,12 @@
 .layer-head { display: flex; align-items: baseline; gap: var(--s-3); margin-block-end: var(--s-4); padding-block-end: var(--s-2); border-block-end: 4px double var(--line-strong); }
 .layer-n { font-family: var(--font-display); font-weight: var(--fw-display); color: var(--accent); font-size: var(--fs-xl); min-width: 1.4em; }
 .layer-head h2 { font-size: var(--fs-xl); }
-.hook { display: grid; gap: var(--s-3); padding: var(--s-6); background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.hook { display: grid; gap: var(--s-3); padding: var(--s-6); background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-md); }
 .hook h3 { font-size: var(--fs-xl); }
 .hook .btn { justify-self: start; }
 .hook-q { font-weight: var(--fw-heavy); font-size: var(--fs-lg); line-height: var(--lh-snug); }
 .reveal-box { display: grid; gap: var(--s-3); padding: var(--s-4) var(--s-5); border-radius: var(--r-sm); background: var(--gold-soft); border: 1px solid color-mix(in oklab, var(--gold) 35%, transparent); animation: rise var(--dur-3) var(--ease-out) both; }
-.reveal-stat { font-family: var(--font-display); font-size: var(--fs-xl); line-height: var(--lh-snug); }
+.reveal-stat { font-family: var(--font-display); font-size: var(--fs-xl); line-height: var(--lh-snug); font-variant-numeric: tabular-nums; }
 .essence { font-family: var(--font-display); font-weight: var(--fw-display-soft); font-size: var(--fs-xl); line-height: var(--lh-snug); margin-block-end: var(--s-4); }
 .essence-lines { list-style: none; padding: 0; margin: 0 0 var(--s-6); display: grid; gap: var(--s-2); }
 .essence-lines li { padding-inline-start: var(--s-4); border-inline-start: 3px solid var(--field); color: var(--ink-2); }
@@ -219,8 +222,11 @@
 .study p { margin-block-start: var(--s-2); }
 .evidence-note { font-size: var(--fs-sm); color: var(--ink-2); }
 .cases { display: grid; gap: var(--s-4); }
-.case-card { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.case-card { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); }
 .case-card h3 { font-size: var(--fs-lg); }
+/* התחום והמקורות בשורה אחת בתחתית הכרטיס, כמו כיתוב, ולא כתווית מעל הכותרת */
+.case-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-3); margin-block-start: var(--s-1); }
+.case-domain { font-size: var(--fs-xs); font-weight: var(--fw-strong); color: var(--ink-3); }
 .spot { display: grid; gap: var(--s-5); }
 @media (min-width: 720px) { .spot { grid-template-columns: 1fr 1fr; } .spot > div:nth-child(2) { grid-row: span 2; } }
 .spot ul { margin: var(--s-2) 0 0; padding-inline-start: var(--s-5); display: grid; gap: var(--s-2); }
@@ -228,7 +234,8 @@
 .phrases li { display: flex; gap: var(--s-2); align-items: flex-start; font-family: var(--font-display); font-weight: var(--fw-display-soft); line-height: var(--lh-snug); }
 .phrases svg { width: 20px; height: 20px; flex: none; color: var(--accent); margin-block-start: 2px; }
 .twins { display: grid; gap: var(--s-3); }
-.twin { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+/* התאומים וציר הזמן: רקע מוצלל בלי קו, כדי שלא כל קופסה בדף תהיה אותה קופסה */
+.twin { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r-md); background: var(--bg-deep); }
 .twin h3 { font-size: var(--fs-lg); }
 .twin-tell { display: flex; gap: var(--s-2); align-items: flex-start; font-weight: var(--fw-strong); color: var(--ink); }
 .twin-tell svg { width: 20px; height: 20px; flex: none; color: var(--accent); margin-block-start: 3px; }
@@ -249,14 +256,17 @@
 .src-refs { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .src-ref { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: var(--r-xs); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-2); font-size: 11px; font-weight: var(--fw-strong); line-height: 1; }
 .src-ref:hover { border-color: var(--accent); color: var(--accent); }
+/* אזור לחיצה גדול מהכפתור (בערך 34 על 26), בלי לשנות את המראה: בטלפון קשה לפגוע בריבוע של 22 */
+.src-ref { position: relative; }
+.src-ref::after { content: ""; position: absolute; inset: -6px -2px; }
 .pd-cta { display: flex; align-items: center; gap: var(--s-4); margin-block: var(--s-4); }
 .pd-cta > svg { width: 36px; height: 36px; color: var(--accent); flex: none; }
 .branches { padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); }
-.timeline { padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.timeline { padding: var(--s-5); border-radius: var(--r-md); background: var(--bg-deep); }
 .timeline h3 { font-size: var(--fs-xl); margin-block-end: var(--s-4); }
 .timeline ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); border-inline-start: 2px solid var(--line-strong); }
 .timeline li { position: relative; display: grid; gap: 4px; padding-inline-start: var(--s-5); }
-.timeline li::before { content: ""; position: absolute; inset-inline-start: -7px; inset-block-start: 7px; width: 12px; height: 12px; border-radius: 2px; transform: rotate(45deg); background: var(--accent); box-shadow: 0 0 0 3px var(--surface); }
+.timeline li::before { content: ""; position: absolute; inset-inline-start: -7px; inset-block-start: 7px; width: 12px; height: 12px; border-radius: 2px; transform: rotate(45deg); background: var(--accent); box-shadow: 0 0 0 3px var(--bg-deep); }
 .tl-date { font-size: var(--fs-xs); font-weight: var(--fw-strong); color: var(--accent); }
 
 /* משחק המטוסים: שרטוט סקר על רשת */
@@ -301,7 +311,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .tf-row .opt svg { width: 20px; height: 20px; }
 .duel { display: grid; gap: var(--s-3); align-items: stretch; }
 @media (min-width: 760px) { .duel { grid-template-columns: 1fr auto 1fr; } }
-.duel-card { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); transition: border-color var(--dur-2) var(--ease-out); }
+.duel-card { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); transition: border-color var(--dur-2) var(--ease-out); }
 .duel-card.is-ok { border-color: var(--ok); }
 .duel-card.is-bad { border-color: var(--bad); }
 .duel-tag { font-size: var(--fs-xs); font-weight: var(--fw-strong); color: var(--ink-3); }
@@ -311,25 +321,25 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .duel-pick[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .duel-pick:disabled { cursor: default; }
 .duel-answer { font-size: var(--fs-sm); font-weight: var(--fw-strong); color: var(--ok); }
-.firstfall-setup { padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); font-size: var(--fs-lg); line-height: var(--lh-body); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.firstfall-setup { padding: var(--s-5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); font-size: var(--fs-lg); line-height: var(--lh-body); }
 .model-answer { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r-sm); background: var(--accent-soft); border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent); }
 .rubric { display: grid; gap: var(--s-2); margin-block-start: var(--s-2); }
 .rubric-item { display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-2) var(--s-3); border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--line); cursor: pointer; }
 .rubric-item input { inline-size: 18px; block-size: 18px; margin-block-start: 4px; accent-color: var(--accent); flex: none; }
-.recall { display: grid; gap: var(--s-3); padding: var(--s-6); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.recall { display: grid; gap: var(--s-3); padding: var(--s-6); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); }
 .dots { display: flex; gap: 6px; margin-block-end: var(--s-5); }
 .dot-step { width: 30px; height: 6px; border-radius: 1px; background: var(--line); transition: background-color var(--dur-2) var(--ease-out); }
 .dot-step.now { background: var(--ink-3); }
 .dot-step.ok { background: var(--ok); }
 .dot-step.bad { background: var(--bad); }
 .next-row { justify-content: flex-end; margin-block-start: var(--s-4); }
-.result { justify-items: start; padding: var(--s-6); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.result { justify-items: start; padding: var(--s-6); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); }
 .result-badge { display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-2) var(--s-4); border-radius: var(--r-sm); background: var(--surface-2); font-size: var(--fs-lg); border: 1px solid var(--line-strong); }
 .result-badge svg { width: 22px; height: 22px; }
 .result-badge.ok { background: var(--ok-soft); color: var(--ok); border-color: color-mix(in oklab, var(--ok) 35%, transparent); }
 
 /* ── מרכז התרגול: גיליונות סקר עם איור לכל סוג ── */
-.water-banner { display: flex; align-items: center; gap: var(--s-4); margin-block-end: var(--s-5); border-color: color-mix(in oklab, var(--accent) 60%, var(--line-strong)); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px color-mix(in oklab, var(--accent) 30%, var(--line)); }
+.water-banner { display: flex; align-items: center; gap: var(--s-4); margin-block-end: var(--s-5); border-color: color-mix(in oklab, var(--accent) 60%, var(--line-strong)); }
 .water-banner > svg { width: 30px; height: 30px; color: var(--accent); flex: none; }
 .water-banner > div { flex: 1; }
 .kind-grid { display: grid; gap: var(--s-3); }
@@ -385,7 +395,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .bn-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--field); border: 2px solid var(--ink); box-shadow: 0 0 0 7px color-mix(in oklab, var(--field) 18%, transparent); }
 .bridge-root { width: 100%; height: 60px; overflow: visible; }
 .bridge-root path { fill: none; stroke: var(--root); stroke-width: 2.5; stroke-dasharray: 1 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; animation: draw 1.3s var(--ease-out) 0.2s forwards; }
-.bridge-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding: var(--s-6); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.bridge-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding: var(--s-6); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); }
 .bridge-card h1 { font-size: var(--fs-2xl); }
 .bridge-sources ul { margin: var(--s-2) 0 0; padding-inline-start: var(--s-5); font-size: var(--fs-sm); color: var(--ink-2); display: grid; gap: var(--s-1); }
 .bridge-pair { display: grid; gap: var(--s-3); }
@@ -410,7 +420,6 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .fp-rim-out { stroke: var(--line-strong); stroke-width: 1; }
 .fp-ticks path { stroke: var(--ink-3); stroke-width: 1; }
 .fp-ticks path.long { stroke: var(--ink-2); stroke-width: 1.4; }
-.fp-deg text { font-size: 9px; fill: var(--ink-3); font-family: var(--font-body); direction: ltr; }
 /* בתוך הדיסק השורשים מוקטנים מאוד, ולכן העובי נמדד בפיקסלים של המסך ולא בקנה המידה של המפה */
 .fp-tap, .fp-lat, .fp-node { vector-effect: non-scaling-stroke; }
 .fp-tap { fill: none; stroke: var(--root); stroke-width: 4 !important; stroke-linecap: round; }
@@ -433,6 +442,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .core-cap { fill: color-mix(in oklab, var(--st-1) 80%, var(--surface)); stroke: var(--ink-2); stroke-width: 1.4; }
 .dd-note { font-size: var(--fs-xs); margin-block-start: var(--s-4); }
 .fp-group + .fp-group { margin-block-start: var(--s-6); }
+.group-sub { font-weight: var(--fw-body); margin-inline-start: var(--s-1); }
 .field-rows { display: grid; gap: var(--s-3); margin-block-start: var(--s-3); }
 .field-row { display: grid; grid-template-columns: minmax(84px, 120px) minmax(0, 1fr) auto; align-items: center; gap: var(--s-3); }
 .fr-name { display: flex; align-items: center; gap: 7px; font-size: var(--fs-sm); font-weight: var(--fw-strong); }
@@ -515,7 +525,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .path-stats {
   display: flex; align-items: center; max-width: 640px; padding: var(--s-2) var(--s-3);
   border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong);
-  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); text-decoration: none; color: var(--ink);
+  text-decoration: none; color: var(--ink);
 }
 .path-stats:hover { border-color: var(--ink-3); }
 .ps-level { display: flex; align-items: center; gap: var(--s-2); flex: 1; min-width: 0; padding-inline-end: var(--s-3); }
@@ -538,7 +548,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 /* חתך הקרקע: פני השטח עם נבט, ומתחתם שכבה לכל שלב. השורש עובר דרך כולן */
 .path-track { position: relative; margin-inline: calc(-1 * var(--s-4)); }
 @media (min-width: 960px) {
-  .path-track { margin-inline: 0; border: 1px solid var(--line-strong); border-radius: var(--r-md); overflow: hidden; box-shadow: 0 24px 46px -36px rgb(var(--shadow-rgb) / 0.7); }
+  .path-track { margin-inline: 0; border: 1px solid var(--line-strong); border-radius: var(--r-xs); overflow: hidden; }
 }
 .path-surface { position: relative; display: grid; justify-items: center; align-content: start; height: 92px; padding: var(--s-4) var(--s-4) 0; border-block-end: 3px solid var(--st-surface); background: color-mix(in oklab, var(--surface) 55%, transparent); }
 .surface-cap { font-size: var(--fs-sm); color: var(--ink-2); text-align: center; max-width: 34ch; line-height: var(--lh-snug); }
@@ -566,7 +576,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
   position: absolute; inset-block-start: 14px; left: 50%; transform: translateX(-50%); z-index: 2;
   display: grid; justify-items: center; gap: 4px; width: max-content; max-width: 94%; padding: var(--s-3) var(--s-5); text-align: center;
   background: var(--surface); border: 1.5px solid var(--ink-2); border-radius: var(--r-sm);
-  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line-strong), 0 12px 24px -18px rgb(var(--shadow-rgb) / 0.75);
+  box-shadow: 0 12px 24px -18px rgb(var(--shadow-rgb) / 0.75);
 }
 .stage-head h2 { font-size: var(--fs-xl); }
 .stage-kicker { font-size: var(--fs-xs); font-weight: var(--fw-strong); color: var(--accent); }
@@ -652,12 +662,13 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 }
 .path-go-bar:active { transform: translateY(4px); box-shadow: 0 2px 0 color-mix(in oklab, var(--accent) 55%, var(--ink)), 0 12px 20px -16px rgb(var(--shadow-rgb) / 0.8); }
 .path-go-bar[data-kind="water"] { background: var(--moss); color: var(--moss-ink); box-shadow: 0 6px 0 color-mix(in oklab, var(--moss) 55%, var(--ink)), 0 22px 34px -20px rgb(var(--shadow-rgb) / 0.85); }
-.go-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: color-mix(in oklab, currentColor 14%, transparent); border: 1.5px solid color-mix(in oklab, currentColor 35%, transparent); }
-.go-icon svg, .go-arrow svg { width: 24px; height: 24px; }
+.go-icon { display: grid; place-items: center; flex: none; }
+.go-icon svg { width: 26px; height: 26px; }
+.go-arrow svg { width: 24px; height: 24px; }
 .go-text { display: grid; gap: 1px; min-width: 0; }
 .go-text strong { font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-lg); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .go-text span { font-size: var(--fs-xs); opacity: 0.92; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 360px) { .go-text strong { font-size: var(--fs-md); } .go-icon { width: 38px; height: 38px; } .path-go-bar { gap: var(--s-2); padding-inline: var(--s-3); } }
+@media (max-width: 360px) { .go-text strong { font-size: var(--fs-md); } .path-go-bar { gap: var(--s-2); padding-inline: var(--s-3); } }
 
 /* גיליון תחנה */
 .st-lead { display: flex; gap: var(--s-4); align-items: flex-start; }
@@ -691,7 +702,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .spot-list { margin: 0; padding-inline-start: var(--s-5); display: grid; gap: var(--s-2); }
 .sess-foot { position: sticky; inset-block-end: 0; z-index: 10; padding-block: var(--s-4) calc(var(--s-4) + env(safe-area-inset-bottom)); background: linear-gradient(to top, var(--bg) 74%, transparent); }
 .sess-foot .btn { min-height: 54px; font-size: var(--fs-lg); box-shadow: 0 5px 0 color-mix(in oklab, var(--accent) 55%, var(--ink)); }
-.sess-foot .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 color-mix(in oklab, var(--accent) 55%, var(--ink)); }
+.sess-foot .btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 color-mix(in oklab, var(--accent) 55%, var(--ink)); }
 
 /* סוף התחנה: נקודות, דרגה, רמה וחותמות */
 .sess-result { display: grid; justify-items: center; text-align: center; gap: var(--s-4); padding-block: var(--s-6) var(--s-8); }
@@ -699,7 +710,7 @@ mark.clue { background: color-mix(in oklab, var(--gold) 28%, transparent); color
 .result-line { max-width: 46ch; }
 .result-visual { min-height: 112px; display: grid; place-items: center; }
 .reward-row { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-3); }
-.reward { display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-2) var(--s-4); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); }
+.reward { display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-2) var(--s-4); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-strong); }
 .reward svg { width: 22px; height: 22px; color: var(--ink-3); }
 .reward strong { font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-xl); line-height: 1; }
 .reward span { font-size: var(--fs-sm); color: var(--ink-2); }

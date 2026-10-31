@@ -39,10 +39,10 @@ function greeting() {
 function StationNode({ s, x, y, onPick }) {
   const k = KINDS[s.kind];
   // בכרטיסים הכיתוב קצר; השמות עצמם בגיליון התחנה ובמסך התחנה. התווית הנגישה מתחילה בכיתוב הגלוי (WCAG 2.5.3)
-  const short = s.kind === 'cards' ? `כרטיסים · ${s.cards.length}` : stationName(s);
+  const short = s.kind === 'cards' ? (s.cards.length === 1 ? 'כרטיס אחד' : `${s.cards.length} כרטיסים`) : stationName(s);
   const cap = s.state === 'current' ? `להתחיל: ${short}` : short;
   return html`<button class=${`node node-${s.state}`} data-sid=${s.sid} data-kind=${s.kind} style=${`left:${pct(x)};top:${y}px`}
-    aria-label=${`${cap} · ${stationSub(s)} · ${STATE_HE[s.state]}`} onClick=${() => onPick(s)}>
+    aria-label=${`${cap}. ${stationSub(s)}. ${STATE_HE[s.state]}`} onClick=${() => onPick(s)}>
     <span class="node-disc"><${Icon} name=${s.state === 'locked' ? 'lock' : k.icon} /></span>
     ${s.state === 'done' && html`<span class="node-tick"><${Icon} name="check" /></span>`}
     <span class="node-cap">${cap}</span>
@@ -73,7 +73,7 @@ function Stage({ st, i, list, frontier, p, onPick }) {
         ${dug > 0 && html`<path class="root-dug" d=${`M0 0 ${S.slice(0, dug).join(' ')}`} />`}
       </svg>
       <header class="stage-head" data-field=${nd.field}>
-        <span class="stage-kicker">שלב ${i + 1} · <span class="num">${done} מתוך ${n}</span></span>
+        <span class="stage-kicker">שלב ${i + 1}, <span class="num">${done} מתוך ${n}</span> תחנות</span>
         <h2 id=${`stage-${i}`}>${title(st.concept)}</h2>
         <${FieldChip} id=${nd.field} />
       </header>
@@ -90,11 +90,11 @@ function Stage({ st, i, list, frontier, p, onPick }) {
 function nextCopy(next) {
   if (next.kind === 'water') {
     const n = next.due.length;
-    return { icon: 'drop', kicker: 'קודם השקיה קצרה', title: `${n} ${n === 1 ? 'מושג מתחיל' : 'מושגים מתחילים'} להישכח`, bar: `השקיה קצרה: ${n === 1 ? 'מושג אחד' : `${n} מושגים`}`, sub: next.cur ? `אחר כך: ${stationName(next.cur)} · ${title(next.cur.concept)}` : 'כ־2 דקות', cta: 'להשקות' };
+    return { icon: 'drop', kicker: 'קודם השקיה קצרה', title: `${n} ${n === 1 ? 'מושג מתחיל' : 'מושגים מתחילים'} להישכח`, bar: `השקיה קצרה: ${n === 1 ? 'מושג אחד' : `${n} מושגים`}`, sub: next.cur ? `אחר כך: ${stationName(next.cur)} של ${title(next.cur.concept)}` : 'כ־2 דקות', cta: 'להשקות' };
   }
   if (next.kind === 'station') {
     const s = next.cur;
-    return { icon: KINDS[s.kind].icon, kicker: `שלב ${s.stage + 1} · ${title(s.concept)}`, title: stationName(s), bar: `להמשיך: ${stationName(s)}`, sub: `${stationSub(s)} · כ־${minutesOf(s)} דק׳`, short: `${stationShort(s)} · כ־${minutesOf(s)} דק׳`, cta: 'להמשיך' };
+    return { icon: KINDS[s.kind].icon, kicker: `שלב ${s.stage + 1}: ${title(s.concept)}`, title: stationName(s), bar: `להמשיך: ${stationName(s)}`, sub: s.kind === 'cards' ? `${stationSub(s)} (כ־${minutesOf(s)} דק׳)` : `כ־${minutesOf(s)} דקות`, short: `${stationShort(s)} (כ־${minutesOf(s)} דק׳)`, cta: 'להמשיך' };
   }
   return { icon: 'medal', kicker: 'סוף המסלול בסקיצה', title: 'עברת את כל השלבים', bar: 'עברת את כל השלבים', sub: 'שלבים חדשים ייכנסו עם המושגים הבאים.', cta: 'למפה' };
 }
@@ -123,12 +123,12 @@ function NextBar({ next }) {
 function StationSheet({ s, cur, p, onClose }) {
   const k = KINDS[s.kind];
   const go = s.state === 'current' || s.state === 'done';
-  return html`<${Sheet} title=${stationName(s)} sub=${`שלב ${s.stage + 1} · ${title(s.concept)}`} onClose=${onClose}>
+  return html`<${Sheet} title=${stationName(s)} sub=${`שלב ${s.stage + 1}: ${title(s.concept)}`} onClose=${onClose}>
     <div class="stack station-sheet">
       <div class="st-lead"><span class="st-icon" data-state=${s.state}><${Icon} name=${k.icon} /></span><p>${stationDesc(s)}</p></div>
       ${s.kind === 'cards' && html`<ul class="st-cards">${s.cards.filter((x) => node(x)).map((x) => html`<li><${Emblem} id=${x} size="sm" locked=${!hasStamp(p, x)} /><span>${title(x)}</span></li>`)}</ul>`}
       ${s.kind === 'test' && html`<div class="st-cards"><${Emblem} id=${s.concept} size="sm" locked=${!hasStamp(p, s.concept)} /><span>${hasStamp(p, s.concept) ? 'החותמת כבר באוסף שלך.' : `מי שעובר מקבל לאוסף את החותמת של ${title(s.concept)}.`}</span></div>`}
-      <p class="faint num">כ־${minutesOf(s)} דקות · ${STATE_HE[s.state]}</p>
+      <p class="faint num">כ־${minutesOf(s)} דקות. ${STATE_HE[s.state]}.</p>
       ${go ? html`<a class=${s.state === 'current' ? 'btn btn-block' : 'btn btn-ghost btn-block'} href=${hrefOf(s)} onClick=${onClose}>${s.state === 'current' ? 'להתחיל' : 'לחזור על התחנה'}<${Icon} name="next" /></a>`
         : s.state === 'soon' ? html`<p class="muted">התחנה תיפתח כשהתוכן שלה יעבור בדיקת עובדות.</p>`
           : html`<div class="stack"><p class="muted">התחנה נפתחת אחרי התחנות שלפניה. ככה כל שלב נבנה על הקודם.</p>${cur && html`<a class="btn btn-ghost btn-block" href=${hrefOf(cur)} onClick=${onClose}>לתחנה הנוכחית: ${stationName(cur)}</a>`}</div>`}

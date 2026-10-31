@@ -97,7 +97,7 @@ export function FirstFallEx({ ex, onDone, stat }) {
     <div class="opts">${ex.options.map((o, i) => html`<${Opt} i=${i} text=${o} disabled=${answered}
       state=${!answered ? '' : i === ex.answer ? 'correct' : i === pick ? 'wrong' : 'dim'} onClick=${() => choose(i)} />`)}</div>
     ${answered && html`<div class="reveal-box">
-      <span class="kicker">${pick === ex.intuitive && pick !== ex.answer ? 'נפלת, כמו רוב האנשים.' : pick === ex.answer ? 'לא נפלת. רוב האנשים כן.' : 'מעניין.'}</span>
+      <span class="kicker">${pick === ex.intuitive && pick !== ex.answer ? 'נפלת, כמו רוב האנשים.' : pick === ex.answer ? 'לא נפלת. רוב האנשים כן.' : 'לא זו התשובה, וגם לא הטעות הנפוצה.'}</span>
       ${stat && html`<p class="reveal-stat">${stat}</p>`}
       <p><${T} text=${ex.reveal} /></p>
       ${ex.explanation && html`<p class="muted"><${T} text=${ex.explanation} /></p>`}
@@ -174,10 +174,11 @@ function mix(arr, seed) {
   return out;
 }
 
-export function ExerciseView({ ex, onDone }) {
+// showType=false כשהכותרת של המסך כבר אומרת את סוג התרגיל (מסך תרגול מסוג אחד), כדי לא לכתוב אותו פעמיים
+export function ExerciseView({ ex, onDone, showType = true }) {
   const C = { case: CaseEx, hunt: HuntEx, mcq: McqEx, truefalse: TrueFalseEx, duel: DuelEx, firstfall: FirstFallEx, explain: ExplainEx }[ex.type];
   return C ? html`<div class="exercise" data-type=${ex.type} data-id=${ex.id}>
-    <span class="ex-type">${TYPE_NAME[ex.type]}</span>
+    ${showType && html`<span class="ex-type">${TYPE_NAME[ex.type]}</span>`}
     <${C} ex=${ex} onDone=${onDone} key=${ex.id} />
   </div>` : null;
 }
